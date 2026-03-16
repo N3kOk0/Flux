@@ -98,6 +98,8 @@
     <string name="show_line_numbers_desc">Mostrar números de línea en el editor</string>
     <string name="markdown_lint">Lint de Markdown</string>
     <string name="markdown_lint_desc">Se comprobarán el formato y la sintaxis de Markdown</string>
+    <string name="color_palette">Paleta de colores</string>
+    <string name="change_app_theme">Cambiar tema de la aplicación</string>
 
     <!-- Settings - Privacy -->
     <string name="Privacy">Privacidad</string>
@@ -348,5 +350,8 @@
         - GitHub:  https://github.com/chindaronit/Flux/releases\n
         - F-Droid: https://f-droid.org/packages/com.flux/
     </string>
+
+    <string name="select_folder">Seleccionar carpeta</string>
+    <string name="select_folder_description">Seleccione dónde almacenar los datos de la aplicación, incluidos imágenes, audio, videos, documentos y copias de seguridad</string>
 
 </resources>

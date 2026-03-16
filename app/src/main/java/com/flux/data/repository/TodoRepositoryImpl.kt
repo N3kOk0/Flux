@@ -2,29 +2,27 @@ package com.flux.data.repository
 
 import com.flux.data.dao.TodoDao
 import com.flux.data.model.TodoModel
-import com.flux.di.IODispatcher
-import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 class TodoRepositoryImpl @Inject constructor(
-    val dao: TodoDao,
-    @IODispatcher private val ioDispatcher: CoroutineDispatcher
+    val dao: TodoDao
 ) : TodoRepository {
     override fun loadAllLists(workspaceId: String): Flow<List<TodoModel>> {
         return dao.loadAllLists(workspaceId)
     }
 
     override suspend fun upsertList(list: TodoModel) {
-        return withContext(ioDispatcher) { dao.upsertList(list) }
+        return withContext(Dispatchers.IO) { dao.upsertList(list) }
     }
 
     override suspend fun deleteList(list: TodoModel) {
-        return withContext(ioDispatcher) { dao.deleteList(list) }
+        return withContext(Dispatchers.IO) { dao.deleteList(list) }
     }
 
     override suspend fun deleteAllWorkspaceLists(workspaceId: String) {
-        return withContext(ioDispatcher) { dao.deleteAllWorkspaceLists(workspaceId) }
+        return withContext(Dispatchers.IO) { dao.deleteAllWorkspaceLists(workspaceId) }
     }
 }

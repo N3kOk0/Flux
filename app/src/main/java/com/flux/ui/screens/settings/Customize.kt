@@ -97,7 +97,7 @@ fun Customize(
                 SingleSettingOption(
                     radius = settings.data.cornerRadius,
                     text = stringResource(R.string.Themes),
-                    description = "Change app theme",
+                    description = stringResource(R.string.change_app_theme),
                     leadingIcon = SettingIcon.Vector(Icons.Default.LightMode)
                 ) {
                     navController.navigate(NavRoutes.Theme.route)

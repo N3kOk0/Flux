@@ -121,7 +121,7 @@ fun StorageSelectionScreen(
                     }
                     Spacer(Modifier.height(16.dp))
                     Text(
-                        "Select where to store app data including images, audio, videos, documents, backup",
+                        stringResource(R.string.select_folder_description),
                         style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
                         modifier = Modifier.padding(16.dp),
                         textAlign = TextAlign.Center,
@@ -138,7 +138,7 @@ fun StorageSelectionScreen(
                     }) {
                         Row(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalAlignment = Alignment.CenterVertically) {
                             Icon(Icons.Default.Folder, null)
-                            Text("Select Folder")
+                            Text(stringResource(R.string.select_folder))
                         }
                     }
                 }

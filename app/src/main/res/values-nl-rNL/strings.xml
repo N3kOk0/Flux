@@ -98,6 +98,8 @@
     <string name="show_line_numbers_desc">Regelnummers weergeven in de editor</string>
     <string name="markdown_lint">Markdown-lint</string>
     <string name="markdown_lint_desc">Markdown-indeling en syntaxis worden gecontroleerd</string>
+    <string name="color_palette">Kleurenpalet</string>
+    <string name="change_app_theme">App-thema wijzigen</string>
 
     <!-- Settings - Privacy -->
     <string name="Privacy">Privacy</string>
@@ -350,4 +352,8 @@
         - GitHub:  https://github.com/chindaronit/Flux/releases\n
         - F-Droid: https://f-droid.org/packages/com.flux/
     </string>
+
+    <string name="select_folder">Map selecteren</string>
+    <string name="select_folder_description">Selecteer waar app-gegevens worden opgeslagen, inclusief afbeeldingen, audio, video\'s, documenten en back-ups</string>
+
 </resources>

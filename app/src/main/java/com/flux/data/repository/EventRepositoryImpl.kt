@@ -4,27 +4,25 @@ import com.flux.data.dao.EventDao
 import com.flux.data.dao.EventInstanceDao
 import com.flux.data.model.EventInstanceModel
 import com.flux.data.model.EventModel
-import com.flux.di.IODispatcher
-import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 class EventRepositoryImpl @Inject constructor(
     private val eventDao: EventDao,
-    private val eventInstanceDao: EventInstanceDao,
-    @IODispatcher private val ioDispatcher: CoroutineDispatcher
+    private val eventInstanceDao: EventInstanceDao
 ) : EventRepository {
     override suspend fun upsertEvent(event: EventModel) {
-        return withContext(ioDispatcher) { eventDao.upsertEvent(event) }
+        return withContext(Dispatchers.IO) { eventDao.upsertEvent(event) }
     }
 
     override suspend fun upsertEventInstance(eventInstanceModel: EventInstanceModel) {
-        return withContext(ioDispatcher) { eventInstanceDao.upsertEventInstance(eventInstanceModel) }
+        return withContext(Dispatchers.IO) { eventInstanceDao.upsertEventInstance(eventInstanceModel) }
     }
 
     override suspend fun deleteEventInstance(eventInstanceModel: EventInstanceModel) {
-        return withContext(ioDispatcher) { eventInstanceDao.deleteEventInstance(eventInstanceModel) }
+        return withContext(Dispatchers.IO) { eventInstanceDao.deleteEventInstance(eventInstanceModel) }
     }
 
     override suspend fun loadAllEvents(): List<EventModel> {
@@ -40,14 +38,14 @@ class EventRepositoryImpl @Inject constructor(
     }
 
     override suspend fun deleteEvent(event: EventModel) {
-        return withContext(ioDispatcher) {
+        return withContext(Dispatchers.IO) {
             eventInstanceDao.deleteAllEventInstance(event.id)
             eventDao.deleteEvent(event)
         }
     }
 
     override suspend fun deleteAllWorkspaceEvent(workspaceId: String) {
-        return withContext(ioDispatcher) {
+        return withContext(Dispatchers.IO) {
             eventDao.deleteAllWorkspaceEvents(workspaceId)
             eventInstanceDao.deleteAllWorkspaceInstance(workspaceId)
         }

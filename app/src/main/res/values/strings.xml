@@ -98,6 +98,8 @@
     <string name="show_line_numbers_desc">Show line numbers in the editor</string>
     <string name="markdown_lint">Markdown Lint</string>
     <string name="markdown_lint_desc">Markdown format and syntax will be checked</string>
+    <string name="color_palette">Color Palette</string>
+    <string name="change_app_theme">Change app theme</string>
 
     <!-- Settings - Privacy -->
     <string name="Privacy">Privacy</string>
@@ -356,5 +358,7 @@
         - [F-droid] https://f-droid.org/packages/com.flux/
     </string>
 
+    <string name="select_folder">Select Folder</string>
+    <string name="select_folder_description">Select where to store app data including images, audio, videos, documents, backup</string>
 
 </resources>

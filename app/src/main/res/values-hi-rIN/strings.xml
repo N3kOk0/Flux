@@ -98,6 +98,8 @@
     <string name="show_line_numbers_desc">संपादक में पंक्ति संख्याएँ दिखाएँ</string>
     <string name="markdown_lint">मार्कडाउन लिंट</string>
     <string name="markdown_lint_desc">मार्कडाउन फ़ॉर्मेट और सिंटैक्स की जाँच की जाएगी</string>
+    <string name="color_palette">रंग पैलेट</string>
+    <string name="change_app_theme">ऐप थीम बदलें</string>
 
     <!-- Settings - Privacy -->
     <string name="Privacy">गोपनीयता</string>
@@ -351,5 +353,8 @@
         - GitHub:  https://github.com/chindaronit/Flux/releases\n
         - F-Droid: https://f-droid.org/packages/com.flux/
     </string>
+
+    <string name="select_folder">फ़ोल्डर चुनें</string>
+    <string name="select_folder_description">ऐप डेटा संग्रहीत करने के लिए स्थान चुनें, जिसमें चित्र, ऑडियो, वीडियो, दस्तावेज़ और बैकअप शामिल हैं</string>
 
 </resources>

@@ -253,7 +253,7 @@ fun Themes(
                             }
                         }
                         Text(
-                            "Color Palette",
+                            stringResource(R.string.Themes),
                             color = MaterialTheme.colorScheme.primary,
                             fontWeight = FontWeight.Bold,
                             fontSize = 20.sp

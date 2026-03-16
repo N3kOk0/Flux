@@ -1,0 +1,5 @@
+* Fixed Automatic Backup Manager
+* Indication in Monthly Calendar view for both events and journals
+* New Themes page with preview in Customize settings
+* Storage Selection page is added to ensure storage root selection for data, backup
+* Fixed Crash in Save Notes, Journals.
