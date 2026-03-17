@@ -65,10 +65,17 @@ android {
         resources {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
             excludes += "assets/dexopt/baseline.prof"
+            merges += "META-INF/services/*"
         }
         jniLibs {
             useLegacyPackaging = false
         }
+    }
+}
+
+tasks.withType<ProcessResources>().configureEach {
+    filesMatching("META-INF/services/*") {
+        filter { it.replace("\r\n", "\n") }
     }
 }
 
