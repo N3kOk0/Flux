@@ -9,7 +9,9 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
@@ -207,6 +209,7 @@ fun WorkspaceDetails(
         topBar = {
             WorkspaceTopBar(
                 workspace,
+                settings.data.workspaceGridColumns==1,
                 onBackPressed = { navController.popBackStack() },
                 onDelete = { showDeleteWorkspaceDialog = true },
                 onTogglePinned = {
@@ -239,29 +242,32 @@ fun WorkspaceDetails(
         LazyColumn(
             Modifier
                 .padding(innerPadding)
-                .padding(horizontal = 12.dp, vertical = 8.dp)
+                .padding(horizontal = 12.dp).padding(bottom = 8.dp)
         ) {
-            item {
-                IconButton(onClick = { editIconSheet = true }) {
-                    Icon(
-                        icons[workspace.icon],
-                        null,
-                        modifier = Modifier.size(48.dp),
-                        tint = MaterialTheme.colorScheme.primary
+            if(settings.data.workspaceGridColumns==1){
+                item {
+                    IconButton(onClick = { editIconSheet = true }) {
+                        Icon(
+                            icons[workspace.icon],
+                            null,
+                            modifier = Modifier.size(48.dp),
+                            tint = MaterialTheme.colorScheme.primary
+                        )
+                    }
+                }
+                item {
+                    Text(
+                        workspace.title,
+                        style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.SemiBold),
+                        color = MaterialTheme.colorScheme.primary
                     )
+                }
+                if (workspace.description.isNotBlank()) {
+                    item { Text(workspace.description, style = MaterialTheme.typography.bodyLarge) }
                 }
             }
             item {
-                Text(
-                    workspace.title,
-                    style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.SemiBold),
-                    color = MaterialTheme.colorScheme.primary
-                )
-            }
-            if (workspace.description.isNotBlank()) {
-                item { Text(workspace.description, style = MaterialTheme.typography.bodyLarge) }
-            }
-            item {
+                if(settings.data.workspaceGridColumns==1) Spacer(Modifier.height(8.dp))
                 if (spacesList.find { it.id == selectedSpaceId.intValue }?.title == stringResource(R.string.Notes) && selectedNotes.isNotEmpty()) {
                     SelectedBar(
                         true,
@@ -286,10 +292,11 @@ fun WorkspaceDetails(
                         onCloseClick = { onNotesEvents(NotesEvents.ClearSelection) }
                     )
                 } else {
+                    if(settings.data.workspaceGridColumns==1) Spacer(Modifier.height(8.dp))
                     Row(
                         Modifier
                             .fillMaxWidth()
-                            .padding(vertical = 8.dp),
+                            .padding(bottom=8.dp),
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.SpaceBetween
                     ) {

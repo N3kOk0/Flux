@@ -4,6 +4,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -40,6 +41,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.flux.data.model.WorkspaceModel
@@ -69,7 +72,9 @@ fun NoteDetailsTopBar(
                 Box(
                     modifier = Modifier
                         .background(
-                            if(!isReadView) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surfaceColorAtElevation(6.dp),
+                            if (!isReadView) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surfaceColorAtElevation(
+                                6.dp
+                            ),
                             RoundedCornerShape(bottomStart = 32.dp, topStart = 32.dp)
                         )
                         .clip(RoundedCornerShape(bottomStart = 32.dp, topStart = 32.dp))
@@ -82,7 +87,9 @@ fun NoteDetailsTopBar(
                 Box(
                     modifier = Modifier
                         .background(
-                            if(isReadView) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surfaceColorAtElevation(6.dp),
+                            if (isReadView) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surfaceColorAtElevation(
+                                6.dp
+                            ),
                             RoundedCornerShape(bottomEnd = 32.dp, topEnd = 32.dp)
                         )
                         .clip(RoundedCornerShape(bottomEnd = 32.dp, topEnd = 32.dp))
@@ -122,7 +129,9 @@ fun JournalDetailsTopBar(
                 Box(
                     modifier = Modifier
                         .background(
-                            if(!isReadView) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surfaceColorAtElevation(6.dp),
+                            if (!isReadView) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surfaceColorAtElevation(
+                                6.dp
+                            ),
                             RoundedCornerShape(bottomStart = 32.dp, topStart = 32.dp)
                         )
                         .clip(RoundedCornerShape(bottomStart = 32.dp, topStart = 32.dp))
@@ -135,7 +144,9 @@ fun JournalDetailsTopBar(
                 Box(
                     modifier = Modifier
                         .background(
-                            if(isReadView) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surfaceColorAtElevation(6.dp),
+                            if (isReadView) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surfaceColorAtElevation(
+                                6.dp
+                            ),
                             RoundedCornerShape(bottomEnd = 32.dp, topEnd = 32.dp)
                         )
                         .clip(RoundedCornerShape(bottomEnd = 32.dp, topEnd = 32.dp))
@@ -158,6 +169,7 @@ fun JournalDetailsTopBar(
 @Composable
 fun WorkspaceTopBar(
     workspace: WorkspaceModel,
+    isFullView: Boolean,
     onBackPressed: () -> Unit,
     onDelete: () -> Unit,
     onTogglePinned: () -> Unit,
@@ -167,23 +179,25 @@ fun WorkspaceTopBar(
     onEditLabel: () -> Unit,
     onRemoveCover: () -> Unit
 ) {
-    Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(if (workspace.cover.isNotBlank()) 160.dp else 80.dp)
-    ) {
-        // Background image
-        AsyncImage(
-            model = workspace.cover,
-            contentDescription = null,
-            contentScale = ContentScale.Crop,
-            modifier = Modifier.matchParentSize()
-        )
+    if (isFullView) {
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(if (workspace.cover.isNotBlank()) 160.dp else 80.dp)
+        ) {
+            // Background image
+            AsyncImage(
+                model = workspace.cover,
+                contentDescription = null,
+                contentScale = ContentScale.Crop,
+                modifier = Modifier.matchParentSize()
+            )
+        }
 
         // Overlay TopAppBar
         TopAppBar(
             colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.Transparent),
-            title = {},
+            title = { },
             navigationIcon = {
                 IconButton(
                     onClick = onBackPressed,
@@ -207,8 +221,56 @@ fun WorkspaceTopBar(
                     onTogglePinned = onTogglePinned,
                     onToggleLock = onToggleLock
                 )
+            }
+        )
+    }
+    else {
+        // Overlay TopAppBar
+        TopAppBar(
+            colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.Transparent),
+            title = {
+                Column {
+                    Text(
+                        workspace.title,
+                        style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.SemiBold),
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                        modifier = Modifier.padding(end = 3.dp)
+                    )
+                    if (workspace.description.isNotBlank()) {
+                        Text(
+                            workspace.description,
+                            style = MaterialTheme.typography.labelMedium,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis,
+                            modifier = Modifier.padding(end = 3.dp)
+                        )
+                    }
+                    } },
+            navigationIcon = {
+                IconButton(
+                    onClick = onBackPressed,
+                    colors = IconButtonDefaults.iconButtonColors(
+                        containerColor = MaterialTheme.colorScheme.surfaceContainerLow,
+                        contentColor = MaterialTheme.colorScheme.onSurface
+                    )
+                ) { Icon(Icons.AutoMirrored.Default.ArrowBack, null) }
             },
-            modifier = Modifier.matchParentSize()
+            actions = {
+                WorkspaceMore(
+                    isCoverAdded = workspace.cover.isNotBlank(),
+                    isLocked = workspace.passKey.isNotBlank(),
+                    isPinned = workspace.isPinned,
+                    showEditLabel = workspace.selectedSpaces.contains(1),
+                    onDelete = onDelete,
+                    onEditDetails = onEditDetails,
+                    onEditLabel = onEditLabel,
+                    onRemoveCover = onRemoveCover,
+                    onAddCover = onAddCover,
+                    onTogglePinned = onTogglePinned,
+                    onToggleLock = onToggleLock
+                )
+            }
         )
     }
 }
@@ -226,7 +288,9 @@ internal fun SelectedBar(
     onCloseClick: () -> Unit
 ) {
     Row(
-        Modifier.fillMaxWidth().padding(vertical = 8.dp),
+        Modifier
+            .fillMaxWidth()
+            .padding(bottom = 8.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween
     ) {

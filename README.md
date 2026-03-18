@@ -21,11 +21,22 @@
 
 </div>
 
-|    ![Image 1](metadata/en-US/images/phoneScreenshots/screenshot1.png)     | ![Image 2](metadata/en-US/images/phoneScreenshots/screenshot3.png) |
-|:---------------------------------------:|:-----------------------------------------:|
-| ![Image 3](metadata/en-US/images/phoneScreenshots/screenshot2.png) |   ![Image 4](metadata/en-US/images/phoneScreenshots/screenshot4.png)    |
-|   ![Image 5](metadata/en-US/images/phoneScreenshots/screenshot5.png)    |    ![Image 6](metadata/en-US/images/phoneScreenshots/screenshot6.png)     |
+| ![Image 1](metadata/en-US/images/phoneScreenshots/screenshot1.png) | ![Image 2](metadata/en-US/images/phoneScreenshots/screenshot3.png) |
+| :----------------------------------------------------------------: | :----------------------------------------------------------------: |
+| ![Image 3](metadata/en-US/images/phoneScreenshots/screenshot2.png) | ![Image 4](metadata/en-US/images/phoneScreenshots/screenshot4.png) |
+| ![Image 5](metadata/en-US/images/phoneScreenshots/screenshot5.png) | ![Image 6](metadata/en-US/images/phoneScreenshots/screenshot6.png) |
+
 ---
+
+<div align="center">
+
+## Release numbers
+
+[![Latest Release](https://img.shields.io/github/v/release/chindaronit/Flux?style=for-the-badge)](https://github.com/chindaronit/Flux/releases)
+[![License](https://img.shields.io/github/license/chindaronit/Flux?style=for-the-badge)](https://github.com/chindaronit/Flux/blob/main/LICENSE)
+[![Downloads](https://img.shields.io/github/downloads/chindaronit/Flux/total?style=for-the-badge)](https://github.com/chindaronit/Flux/releases)
+
+</div>
 
 ## 🎉 Features
 
@@ -44,9 +55,11 @@
 ---
 
 ## 🌎 Translations
+
 English, Hindi, French, Portugal (Brazil), Russian, German, Spanish, Dutch
 
 ## 🔎 Technical Details
+
 - **Programming Languages**: Kotlin
 - **Build Tool**: Gradle with Kotlin DSL
 - **Android Version**: The application targets Android SDK version 36 and is compatible with devices
@@ -55,6 +68,7 @@ English, Hindi, French, Portugal (Brazil), Russian, German, Spanish, Dutch
 - **Java Version**: JVM Target 11.
 
 ## 🛠️ Architecture
+
 - **MVI**: Model View ViewModel
 
 ## 📚 Libraries and Frameworks
@@ -85,6 +99,16 @@ In Android Studio, select `Run > Run 'app'` to start the application.
 Any form of contribution is welcome! If you find a bug or have a new feature request, please create
 an issue. If you want to contribute code directly to this project, you can create a pull request.
 
+<div align="center">
+
+## Thanks to all contributors
+
+<a href="https://github.com/chindaronit/Flux/graphs/contributors">
+<img src="https://contrib.rocks/image?repo=chindaronit/Flux" width="200"/>
+</a>
+
+</div>
+
 ## ⚠️ License
 
 ```text
@@ -104,3 +128,8 @@ GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
 along with this program. If not, see <https://www.gnu.org/licenses/>.
+```
+
+<div align="center">
+  <img src=".github/india.jpg" alt="India" height="30" style="border-radius:50%; vertical-align:middle;"> MADE IN INDIA
+</div>
