@@ -7,6 +7,7 @@ import androidx.compose.material.icons.filled.AutoStories
 import androidx.compose.material.icons.filled.Event
 import androidx.compose.material.icons.filled.EventAvailable
 import androidx.compose.material.icons.filled.TaskAlt
+import androidx.compose.material.icons.filled.TrackChanges
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
@@ -45,6 +46,7 @@ fun getSpacesList(): List<Space> {
         Space(3, stringResource(R.string.Events), Icons.Default.Event),
         Space(4, stringResource(R.string.Journal), Icons.Default.AutoStories),
         Space(5, stringResource(R.string.Habits), Icons.Default.EventAvailable),
-        Space(6, stringResource(R.string.Analytics), Icons.Default.Analytics)
+        Space(6, stringResource(R.string.Analytics), Icons.Default.Analytics),
+        Space(7, "Progress Tracker", Icons.Default.TrackChanges)
     )
 }

@@ -14,6 +14,7 @@ import com.flux.ui.state.EventState
 import com.flux.ui.state.HabitState
 import com.flux.ui.state.JournalState
 import com.flux.ui.state.NotesState
+import com.flux.ui.state.ProgressBoardState
 import com.flux.ui.state.Settings
 import com.flux.ui.state.States
 import com.flux.ui.state.TodoState
@@ -23,6 +24,7 @@ import com.flux.ui.viewModel.EventViewModel
 import com.flux.ui.viewModel.HabitViewModel
 import com.flux.ui.viewModel.JournalViewModel
 import com.flux.ui.viewModel.NotesViewModel
+import com.flux.ui.viewModel.ProgressBoardViewModel
 import com.flux.ui.viewModel.SettingsViewModel
 import com.flux.ui.viewModel.TodoViewModel
 import com.flux.ui.viewModel.ViewModels
@@ -41,13 +43,15 @@ fun AppNavHost(
     todoViewModel: TodoViewModel,
     journalViewModel: JournalViewModel,
     backupViewModel: BackupViewModel,
+    progressBoardViewModel: ProgressBoardViewModel,
     settings: Settings,
     notesState: NotesState,
     workspaceState: WorkspaceState,
     eventState: EventState,
     habitState: HabitState,
     todoState: TodoState,
-    journalState: JournalState
+    journalState: JournalState,
+    progressBoardState: ProgressBoardState
 ) {
     NavHost(navController, startDestination = NavRoutes.AuthScreen.route) {
         NotesScreens.forEach { (route, screen) ->
@@ -82,6 +86,7 @@ fun AppNavHost(
                         todoState,
                         workspaceState,
                         journalState,
+                        progressBoardState,
                         settings
                     ),
                     ViewModels(
@@ -92,7 +97,8 @@ fun AppNavHost(
                         workspaceViewModel,
                         journalViewModel,
                         settingsViewModel,
-                        backupViewModel
+                        backupViewModel,
+                        progressBoardViewModel
                     )
                 )
             }
@@ -109,6 +115,7 @@ fun AppNavHost(
                         todoState,
                         workspaceState,
                         journalState,
+                        progressBoardState,
                         settings
                     )
                 )
@@ -126,6 +133,7 @@ fun AppNavHost(
                         todoState,
                         workspaceState,
                         journalState,
+                        progressBoardState,
                         settings
                     ),
                     ViewModels(
@@ -136,7 +144,8 @@ fun AppNavHost(
                         workspaceViewModel,
                         journalViewModel,
                         settingsViewModel,
-                        backupViewModel
+                        backupViewModel,
+                        progressBoardViewModel
                     )
                 )
             }
@@ -183,6 +192,7 @@ fun AppNavHost(
                         todoState,
                         workspaceState,
                         journalState,
+                        progressBoardState,
                         settings
                     ),
                     ViewModels(
@@ -193,7 +203,8 @@ fun AppNavHost(
                         workspaceViewModel,
                         journalViewModel,
                         settingsViewModel,
-                        backupViewModel
+                        backupViewModel,
+                        progressBoardViewModel
                     )
                 )
             }
@@ -231,6 +242,7 @@ fun AppNavHost(
                         todoState,
                         workspaceState,
                         journalState,
+                        progressBoardState,
                         settings
                     ),
                     ViewModels(
@@ -241,7 +253,8 @@ fun AppNavHost(
                         workspaceViewModel,
                         journalViewModel,
                         settingsViewModel,
-                        backupViewModel
+                        backupViewModel,
+                        progressBoardViewModel
                     )
                 )
             }
@@ -279,6 +292,7 @@ fun AppNavHost(
                         todoState,
                         workspaceState,
                         journalState,
+                        progressBoardState,
                         settings
                     ),
                     ViewModels(
@@ -289,7 +303,8 @@ fun AppNavHost(
                         workspaceViewModel,
                         journalViewModel,
                         settingsViewModel,
-                        backupViewModel
+                        backupViewModel,
+                        progressBoardViewModel
                     )
                 )
             }
@@ -308,6 +323,7 @@ fun AppNavHost(
                             todoState,
                             workspaceState,
                             journalState,
+                            progressBoardState,
                             settings
                         ),
                         ViewModels(
@@ -318,7 +334,8 @@ fun AppNavHost(
                             workspaceViewModel,
                             journalViewModel,
                             settingsViewModel,
-                            backupViewModel
+                            backupViewModel,
+                            progressBoardViewModel
                         )
                     )
                 }
@@ -334,6 +351,7 @@ fun AppNavHost(
                             todoState,
                             workspaceState,
                             journalState,
+                            progressBoardState,
                             settings
                         ),
                         ViewModels(
@@ -344,7 +362,8 @@ fun AppNavHost(
                             workspaceViewModel,
                             journalViewModel,
                             settingsViewModel,
-                            backupViewModel
+                            backupViewModel,
+                            progressBoardViewModel
                         )
                     )
                 }
@@ -388,7 +407,30 @@ fun AppNavHost(
                 val instanceDate = entry.arguments?.getLong("instanceDate") ?: 0L
                 val eventDate = entry.arguments?.getLong("eventDate") ?: 0L
 
-                screen(navController, States(notesState, eventState, habitState, todoState, workspaceState, journalState, settings), ViewModels(notesViewModel, eventViewModel, todoViewModel, habitViewModel, workspaceViewModel, journalViewModel, settingsViewModel, backupViewModel), eventId, workspaceId, instanceDate, eventDate)
+                screen(navController,
+                    States(
+                        notesState,
+                        eventState,
+                        habitState,
+                        todoState,
+                        workspaceState,
+                        journalState,
+                        progressBoardState,
+                        settings),
+                    ViewModels(
+                        notesViewModel,
+                        eventViewModel,
+                        todoViewModel,
+                        habitViewModel,
+                        workspaceViewModel,
+                        journalViewModel,
+                        settingsViewModel,
+                        backupViewModel,
+                        progressBoardViewModel),
+                    eventId,
+                    workspaceId,
+                    instanceDate,
+                    eventDate)
             }
         }
 
@@ -414,6 +456,7 @@ fun AppNavHost(
                         todoState,
                         workspaceState,
                         journalState,
+                        progressBoardState,
                         settings
                     ),
                     ViewModels(
@@ -424,7 +467,8 @@ fun AppNavHost(
                         workspaceViewModel,
                         journalViewModel,
                         settingsViewModel,
-                        backupViewModel
+                        backupViewModel,
+                        progressBoardViewModel
                     ),
                     workspaceId
                 )
@@ -453,6 +497,7 @@ fun AppNavHost(
                         todoState,
                         workspaceState,
                         journalState,
+                        progressBoardState,
                         settings
                     ),
                     ViewModels(
@@ -463,7 +508,8 @@ fun AppNavHost(
                         workspaceViewModel,
                         journalViewModel,
                         settingsViewModel,
-                        backupViewModel
+                        backupViewModel,
+                        progressBoardViewModel
                     ),
                     id
                 )

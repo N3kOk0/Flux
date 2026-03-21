@@ -33,6 +33,7 @@ import com.flux.ui.viewModel.EventViewModel
 import com.flux.ui.viewModel.HabitViewModel
 import com.flux.ui.viewModel.JournalViewModel
 import com.flux.ui.viewModel.NotesViewModel
+import com.flux.ui.viewModel.ProgressBoardViewModel
 import com.flux.ui.viewModel.SettingsViewModel
 import com.flux.ui.viewModel.TodoViewModel
 import com.flux.ui.viewModel.WorkspaceViewModel
@@ -45,6 +46,7 @@ import kotlinx.coroutines.flow.onEach
 class MainActivity : AppCompatActivity() {
 
     private var keepSplashScreen = mutableStateOf(true)
+
     @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -66,6 +68,7 @@ class MainActivity : AppCompatActivity() {
             val todoViewModel: TodoViewModel = hiltViewModel()
             val journalViewModel: JournalViewModel = hiltViewModel()
             val backupViewModel: BackupViewModel = hiltViewModel()
+            val progressBoardViewModel: ProgressBoardViewModel = hiltViewModel()
 
             // States
             val settings by settingsViewModel.state.collectAsState()
@@ -75,6 +78,7 @@ class MainActivity : AppCompatActivity() {
             val habitState by habitViewModel.state.collectAsStateWithLifecycle()
             val todoState by todoViewModel.state.collectAsStateWithLifecycle()
             val journalState by journalViewModel.state.collectAsStateWithLifecycle()
+            val progressBoardState by progressBoardViewModel.state.collectAsStateWithLifecycle()
 
             // Stop splash screen when settings are loaded
             LaunchedEffect(settings.isLoading) { keepSplashScreen.value = settings.isLoading }
@@ -101,13 +105,15 @@ class MainActivity : AppCompatActivity() {
                             todoViewModel = todoViewModel,
                             journalViewModel = journalViewModel,
                             backupViewModel = backupViewModel,
+                            progressBoardViewModel = progressBoardViewModel,
                             settings = settings,
                             notesState = notesState,
                             workspaceState = workspaceState,
                             eventState = eventState,
                             habitState = habitState,
                             todoState = todoState,
-                            journalState = journalState
+                            journalState = journalState,
+                            progressBoardState = progressBoardState
                         )
                     }
                 }

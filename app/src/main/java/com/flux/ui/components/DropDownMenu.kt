@@ -25,6 +25,7 @@ import androidx.compose.material.icons.outlined.Print
 import androidx.compose.material.icons.outlined.PushPin
 import androidx.compose.material.icons.outlined.Share
 import androidx.compose.material.icons.outlined.TaskAlt
+import androidx.compose.material.icons.outlined.TrackChanges
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.HorizontalDivider
@@ -279,6 +280,16 @@ fun SpacesMenu(
                 leadingIcon = { Icon(Icons.Outlined.EventAvailable, contentDescription = null) },
                 onClick = {
                     onConfirm(5)
+                    onDismiss()
+                }
+            )
+        }
+        if (selectedSpaces.contains(7)) {
+            DropdownMenuItem(
+                text = { Text("Progress Tracker") },
+                leadingIcon = { Icon(Icons.Outlined.TrackChanges, contentDescription = null) },
+                onClick = {
+                    onConfirm(7)
                     onDismiss()
                 }
             )

@@ -12,6 +12,7 @@ import com.flux.data.dao.HabitsDao
 import com.flux.data.dao.JournalDao
 import com.flux.data.dao.LabelDao
 import com.flux.data.dao.NotesDao
+import com.flux.data.dao.ProgressBoardDao
 import com.flux.data.dao.SettingsDao
 import com.flux.data.dao.TodoDao
 import com.flux.data.dao.WorkspaceDao
@@ -23,6 +24,7 @@ import com.flux.data.model.HabitModel
 import com.flux.data.model.JournalModel
 import com.flux.data.model.LabelModel
 import com.flux.data.model.NotesModel
+import com.flux.data.model.ProgressBoardModel
 import com.flux.data.model.SettingsModel
 import com.flux.data.model.TodoModel
 import com.flux.data.model.WorkspaceModel
@@ -33,8 +35,8 @@ import kotlinx.serialization.json.Json
 import java.util.UUID
 
 @Database(
-    entities = [EventModel::class, LabelModel::class, EventInstanceModel::class, SettingsModel::class, NotesModel::class, HabitModel::class, HabitInstanceModel::class, WorkspaceModel::class, TodoModel::class, JournalModel::class],
-    version = 5,
+    entities = [EventModel::class, LabelModel::class, EventInstanceModel::class, SettingsModel::class, NotesModel::class, HabitModel::class, HabitInstanceModel::class, WorkspaceModel::class, TodoModel::class, JournalModel::class, ProgressBoardModel::class],
+    version = 6,
     exportSchema = false
 )
 @TypeConverters(Converter::class)
@@ -49,6 +51,7 @@ abstract class FluxDatabase : RoomDatabase() {
     abstract val journalDao: JournalDao
     abstract val todoDao: TodoDao
     abstract val labelDao: LabelDao
+    abstract val progressBoardDao: ProgressBoardDao
 }
 
 val MIGRATION_1_2 = object : Migration(1, 2) {
@@ -326,5 +329,23 @@ val MIGRATION_3_4 = object : Migration(3, 4) {
 val Migration_4_5 = object : Migration(4, 5) {
     override fun migrate(db: SupportSQLiteDatabase) {
         db.execSQL("ALTER TABLE SettingsModel ADD COLUMN backupFrequency INTEGER NOT NULL DEFAULT 0")
+    }
+}
+
+val MIGRATION_5_6 = object : Migration(5, 6) {
+    override fun migrate(db: SupportSQLiteDatabase) {
+        db.execSQL("""
+            CREATE TABLE IF NOT EXISTS `ProgressBoardModel` (
+                `itemId` TEXT NOT NULL,
+                `workspaceId` TEXT NOT NULL,
+                `title` TEXT NOT NULL,
+                `description` TEXT NOT NULL,
+                `startDate` INTEGER NOT NULL,
+                `endDate` INTEGER NOT NULL,
+                `icon` INTEGER NOT NULL,
+                `status` INTEGER NOT NULL,
+                PRIMARY KEY(`itemId`)
+            )
+        """.trimIndent())
     }
 }

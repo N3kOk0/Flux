@@ -9,6 +9,7 @@ import com.flux.data.dao.HabitsDao
 import com.flux.data.dao.JournalDao
 import com.flux.data.dao.LabelDao
 import com.flux.data.dao.NotesDao
+import com.flux.data.dao.ProgressBoardDao
 import com.flux.data.dao.SettingsDao
 import com.flux.data.dao.TodoDao
 import com.flux.data.dao.WorkspaceDao
@@ -16,6 +17,7 @@ import com.flux.data.database.FluxDatabase
 import com.flux.data.database.MIGRATION_1_2
 import com.flux.data.database.MIGRATION_2_3
 import com.flux.data.database.MIGRATION_3_4
+import com.flux.data.database.MIGRATION_5_6
 import com.flux.data.database.Migration_4_5
 import dagger.Module
 import dagger.Provides
@@ -36,7 +38,7 @@ object DataModule {
         FluxDatabase::class.java,
         "FluxDatabase"
     )
-        .addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4, Migration_4_5)
+        .addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4, Migration_4_5, MIGRATION_5_6)
         .build()
 
     @Singleton
@@ -78,4 +80,8 @@ object DataModule {
     @Singleton
     @Provides
     fun provideLabelDao(db: FluxDatabase): LabelDao = db.labelDao
+
+    @Singleton
+    @Provides
+    fun provideProgressBoardDao(db: FluxDatabase): ProgressBoardDao = db.progressBoardDao
 }

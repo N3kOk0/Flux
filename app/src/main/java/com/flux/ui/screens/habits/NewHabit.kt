@@ -16,7 +16,6 @@ import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Create
 import androidx.compose.material.icons.filled.Repeat
 import androidx.compose.material.icons.filled.Today
-import androidx.compose.material.icons.outlined.DeleteOutline
 import androidx.compose.material.icons.outlined.Flag
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -57,7 +56,6 @@ import com.flux.R
 import com.flux.data.model.HabitModel
 import com.flux.data.model.RecurrenceRule
 import com.flux.ui.components.DatePickerModal
-import com.flux.ui.components.DeleteAlert
 import com.flux.ui.components.TimePicker
 import com.flux.ui.events.HabitEvents
 import com.flux.ui.screens.events.getTextFieldColors
@@ -96,18 +94,6 @@ fun NewHabit(
         stringResource(R.string.saturday_short),
         stringResource(R.string.sunday_short)
     )
-    var showDeleteDialog by remember { mutableStateOf(false) }
-
-    if(showDeleteDialog){
-        DeleteAlert({
-            showDeleteDialog=false
-        }, {
-            onHabitEvents(HabitEvents.DeleteHabit(habit, context))
-            navController.popBackStack()
-            showDeleteDialog=false
-        })
-    }
-
     // Initialize selectedDays from existing habit's recurrence
     val selectedDays = remember {
         mutableStateListOf<Int>().apply {
@@ -152,16 +138,6 @@ fun NewHabit(
                         }
                     ) {
                         Icon(Icons.Default.Check, null)
-                    }
-
-                    if (!isNewHabit) {
-                        IconButton({ showDeleteDialog=true }) {
-                            Icon(
-                                Icons.Outlined.DeleteOutline,
-                                null,
-                                tint = MaterialTheme.colorScheme.error
-                            )
-                        }
                     }
                 }
             )

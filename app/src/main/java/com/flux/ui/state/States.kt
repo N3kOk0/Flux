@@ -7,5 +7,6 @@ data class States(
     val todoState: TodoState,
     val workspaceState: WorkspaceState,
     val journalState: JournalState,
+    val progressBoardState: ProgressBoardState,
     val settings: Settings
 )

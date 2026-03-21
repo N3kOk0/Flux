@@ -238,6 +238,7 @@ val WorkspaceScreens =
                 states.todoState.isLoading,
                 states.journalState.isLoading,
                 states.habitState.isLoading,
+                states.progressBoardState.isLoading,
                 states.workspaceState.allSpaces.first { it.workspaceId == workspaceId },
                 states.eventState.allEvent,
                 states.notesState.allNotes.filter { it.workspaceId == workspaceId },
@@ -251,6 +252,7 @@ val WorkspaceScreens =
                 states.eventState.datedEvents,
                 states.habitState.allHabits,
                 states.todoState.allLists,
+                states.progressBoardState.allItems,
                 states.journalState.datedEntries,
                 states.journalState.allEntries,
                 states.habitState.allInstances,
@@ -262,7 +264,8 @@ val WorkspaceScreens =
                 viewModels.habitViewModel::onEvent,
                 viewModels.todoViewModel::onEvent,
                 viewModels.journalViewModel::onEvent,
-                viewModels.settingsViewModel::onEvent
+                viewModels.settingsViewModel::onEvent,
+                viewModels.progressBoardViewModel::onEvent
             )
         }
     )

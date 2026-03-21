@@ -83,7 +83,12 @@ import com.flux.ui.state.Settings
 import kotlinx.coroutines.launch
 import java.time.YearMonth
 import com.flux.R
+import com.flux.data.model.ProgressBoardModel
 import com.flux.other.ensureStorageRoot
+import com.flux.ui.components.NewBoardItemSheet
+import com.flux.ui.components.ProgressTrackerToolBar
+import com.flux.ui.events.ProgressBoardEvents
+import com.flux.ui.screens.progressBoard.progressBoardItems
 import com.flux.ui.viewModel.SettingsViewModel
 import java.time.LocalDate
 
@@ -99,6 +104,7 @@ fun WorkspaceDetails(
     isTodoLoading: Boolean,
     isJournalEntriesLoading: Boolean,
     isHabitLoading: Boolean,
+    isProgressBoardLoading: Boolean,
     workspace: WorkspaceModel,
     allEvents: List<EventModel>,
     allNotes: List<NotesModel>,
@@ -112,6 +118,7 @@ fun WorkspaceDetails(
     datedEvents: List<EventModel>,
     allHabits: List<HabitModel>,
     allLists: List<TodoModel>,
+    allProgressBoardItems: List<ProgressBoardModel>,
     datedJournalEntries: List<JournalModel>,
     allJournalEntries: List<JournalModel>,
     allHabitInstances: List<HabitInstanceModel>,
@@ -123,7 +130,8 @@ fun WorkspaceDetails(
     onHabitEvents: (HabitEvents) -> Unit,
     onTodoEvents: (TodoEvents) -> Unit,
     onJournalEvents: (JournalEvents) -> Unit,
-    onSettingEvents: (SettingEvents) -> Unit
+    onSettingEvents: (SettingEvents) -> Unit,
+    onProgressBoardEvents: (ProgressBoardEvents) -> Unit
 ) {
     val workspaceId = workspace.workspaceId
     LaunchedEffect(workspaceId) {
@@ -132,6 +140,7 @@ fun WorkspaceDetails(
         onTodoEvents(TodoEvents.EnterWorkspace(workspaceId))
         onTaskEvents(TaskEvents.EnterWorkspace(workspaceId))
         onHabitEvents(HabitEvents.EnterWorkspace(workspaceId))
+        onProgressBoardEvents(ProgressBoardEvents.EnterWorkspace(workspaceId))
     }
     val notesLabel = stringResource(R.string.Notes)
     val habitsLabel = stringResource(R.string.Habits)
@@ -154,6 +163,8 @@ fun WorkspaceDetails(
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     val scope = rememberCoroutineScope()
     var addSpaceBottomSheet by remember { mutableStateOf(false) }
+    var addProgressItem by remember { mutableStateOf(false) }
+    var selectedProgressBoardItem by remember { mutableStateOf(ProgressBoardModel(workspaceId=workspaceId)) }
     val spacesList = getSpacesList()
     var showDeleteDialog by remember { mutableStateOf(false) }
     val imagePickerLauncher = rememberLauncherForActivityResult(
@@ -230,9 +241,7 @@ fun WorkspaceDetails(
                     scope = scope,
                     settingsViewModel = settingsViewModel,
                     rootPicker = rootPicker
-                ) {
-                    imagePickerLauncher.launch("image/*")
-                } },
+                ) { imagePickerLauncher.launch("image/*") } },
                 onEditDetails = { editWorkspaceDialog = true },
                 onEditLabel = { navController.navigate(NavRoutes.EditLabels.withArgs(workspaceId)) },
                 onRemoveCover = { onWorkspaceEvents(WorkspaceEvents.UpsertSpace(workspace.copy(cover = ""))) }
@@ -338,6 +347,12 @@ fun WorkspaceDetails(
                         if (spacesList.find { it.id == selectedSpaceId.intValue }?.title == stringResource(R.string.To_Do)) {
                             TodoToolBar(navController, workspaceId)
                         }
+                        if (spacesList.find { it.id == selectedSpaceId.intValue }?.title == "Progress Tracker") {
+                            ProgressTrackerToolBar{
+                                addProgressItem=true
+                                selectedProgressBoardItem = ProgressBoardModel(workspaceId=workspaceId)
+                            }
+                        }
                         if (spacesList.find { it.id == selectedSpaceId.intValue }?.title == stringResource(R.string.Events)) {
                             EventToolBar(
                                 navController,
@@ -409,6 +424,12 @@ fun WorkspaceDetails(
                     allEvents,
                     allEventInstances
                 )
+            }
+            if(spacesList.find { it.id == selectedSpaceId.intValue }?.title == "Progress Tracker"){
+                progressBoardItems(isProgressBoardLoading, radius, allProgressBoardItems) {
+                    addProgressItem=true
+                    selectedProgressBoardItem=it
+                }
             }
             if (spacesList.find { it.id == selectedSpaceId.intValue }?.title == todoLabel) {
                 todoHomeItems(
@@ -532,6 +553,12 @@ fun WorkspaceDetails(
             }
         }
     )
+
+    NewBoardItemSheet(addProgressItem, sheetState, selectedProgressBoardItem, { addProgressItem=false }) {
+        addProgressItem=false
+        onProgressBoardEvents(ProgressBoardEvents.UpsertProgressItem(it))
+        selectedProgressBoardItem=ProgressBoardModel(workspaceId=workspaceId)
+    }
 
     if(showDeleteDialog){
         DeleteAlert(onConfirmation = {

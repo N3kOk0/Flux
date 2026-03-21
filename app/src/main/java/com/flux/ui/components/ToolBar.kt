@@ -142,6 +142,13 @@ fun TodoToolBar(navController: NavController, workspaceId: String) {
 }
 
 @Composable
+fun ProgressTrackerToolBar(onClick: () -> Unit) {
+    IconButton(onClick) {
+        Icon(Icons.Default.Add, null, tint = MaterialTheme.colorScheme.primary)
+    }
+}
+
+@Composable
 fun JournalToolBar(
     navController: NavController,
     workspaceId: String,
