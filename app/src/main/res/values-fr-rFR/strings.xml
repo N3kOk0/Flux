@@ -130,6 +130,7 @@
     <string name="daily">Quotidien</string>
     <string name="weekly">Hebdomadaire</string>
     <string name="monthly">Mensuel</string>
+    <string name="success">Succès</string>
 
     <!-- Settings - About -->
     <string name="About">À propos</string>
@@ -357,4 +358,11 @@
     <string name="select_folder">Sélectionner un dossier</string>
     <string name="select_folder_description">Sélectionnez où stocker les données de l\'application, y compris les images, l\'audio, les vidéos, les documents et les sauvegardes</string>
 
+    <!-- Progress Tracker -->
+    <string name="not_started">Non commencé</string>
+    <string name="in_progress">En cours</string>
+    <string name="empty">Vide</string>
+    <string name="target">Objectif</string>
+    <string name="start">Début</string>
+    <string name="progress_tracker">Suivi de progression</string>
 </resources>

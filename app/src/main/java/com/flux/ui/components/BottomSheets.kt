@@ -81,6 +81,7 @@ import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.flux.R
@@ -165,7 +166,7 @@ fun NewWorkspaceBottomSheet(
                         focusedTextColor = MaterialTheme.colorScheme.primary,
                         focusedPlaceholderColor = MaterialTheme.colorScheme.primary
                     ),
-                    keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Next),
+                    keyboardOptions = KeyboardOptions.Default.copy(capitalization = KeyboardCapitalization.Words, imeAction = ImeAction.Next),
                     keyboardActions = KeyboardActions(onNext = { focusRequesterDesc.requestFocus() })
                 )
 
@@ -186,7 +187,7 @@ fun NewWorkspaceBottomSheet(
                         focusedTextColor = MaterialTheme.colorScheme.primary,
                         focusedPlaceholderColor = MaterialTheme.colorScheme.primary
                     ),
-                    keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Done),
+                    keyboardOptions = KeyboardOptions.Default.copy(capitalization = KeyboardCapitalization.Sentences, imeAction = ImeAction.Done),
                     keyboardActions = KeyboardActions(
                         onDone = {
                             keyboardController?.hide()
@@ -900,7 +901,7 @@ fun NewBoardItemSheet(
                     textStyle = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.SemiBold),
                     shape = RoundedCornerShape(topStart = 32.dp, topEnd = 32.dp),
                     colors = getTextFieldColors(),
-                    keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Next),
+                    keyboardOptions = KeyboardOptions.Default.copy(capitalization = KeyboardCapitalization.Words, imeAction = ImeAction.Next),
                     keyboardActions = KeyboardActions(onNext = { focusRequesterDesc.requestFocus() })
                 )
 
@@ -915,23 +916,23 @@ fun NewBoardItemSheet(
                     singleLine = true,
                     shape = RoundedCornerShape(bottomStart = 32.dp, bottomEnd = 32.dp),
                     colors = getTextFieldColors(),
-                    keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Done),
+                    keyboardOptions = KeyboardOptions.Default.copy(capitalization = KeyboardCapitalization.Sentences, imeAction = ImeAction.Done),
                     keyboardActions = KeyboardActions(onDone = { keyboardController?.hide() })
                 )
 
                 LazyRow(Modifier.fillMaxWidth().padding(start = 8.dp), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                     item {
-                        BoardStatusItem(selectedStatus==0, "Not Started", failed) {
+                        BoardStatusItem(selectedStatus==0, stringResource(R.string.not_started), failed) {
                             selectedStatus=0
                         }
                     }
                     item {
-                        BoardStatusItem(selectedStatus==1, "In Progress", pending){
+                        BoardStatusItem(selectedStatus==1, stringResource(R.string.in_progress), pending){
                             selectedStatus=1
                         }
                     }
                     item {
-                        BoardStatusItem(selectedStatus==2, "Completed", completed){
+                        BoardStatusItem(selectedStatus==2, stringResource(R.string.Completed), completed){
                             selectedStatus=2
                         }
                     }
@@ -942,13 +943,13 @@ fun NewBoardItemSheet(
                     horizontalArrangement = Arrangement.spacedBy(8.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    BoardTimeCard(Icons.Default.Timelapse, "Start") {
+                    BoardTimeCard(Icons.Default.Timelapse, stringResource(R.string.start)) {
                         showDateSelector=true
                         isSelectingStartDate=true
                     }
                     Spacer(Modifier.width(2.dp))
                     Text(
-                        if(startDate==-1L) "Empty" else convertMillisToDate(startDate),
+                        if(startDate==-1L) stringResource(R.string.empty) else convertMillisToDate(startDate),
                         style = MaterialTheme.typography.labelLarge,
                         modifier = Modifier.clip(RoundedCornerShape(50))
                             .clickable{
@@ -963,12 +964,12 @@ fun NewBoardItemSheet(
                     horizontalArrangement = Arrangement.spacedBy(8.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    BoardTimeCard(Icons.Default.Flag, "Target") {
+                    BoardTimeCard(Icons.Default.Flag, stringResource(R.string.target)) {
                         showDateSelector=true
                         isSelectingStartDate=false
                     }
                     Text(
-                        if(endDate==-1L) "Empty" else convertMillisToDate(endDate),
+                        if(endDate==-1L) stringResource(R.string.empty) else convertMillisToDate(endDate),
                         style = MaterialTheme.typography.labelLarge,
                         modifier = Modifier.clip(RoundedCornerShape(50))
                             .clickable{

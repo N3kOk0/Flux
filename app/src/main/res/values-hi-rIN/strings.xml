@@ -130,6 +130,7 @@
     <string name="daily">दैनिक</string>
     <string name="weekly">साप्ताहिक</string>
     <string name="monthly">मासिक</string>
+    <string name="success">सफलता</string>
 
     <!-- Settings - About -->
     <string name="About">अबाउट</string>
@@ -357,4 +358,11 @@
     <string name="select_folder">फ़ोल्डर चुनें</string>
     <string name="select_folder_description">ऐप डेटा संग्रहीत करने के लिए स्थान चुनें, जिसमें चित्र, ऑडियो, वीडियो, दस्तावेज़ और बैकअप शामिल हैं</string>
 
+    <!-- Progress Tracker -->
+    <string name="not_started">शुरू नहीं हुआ</string>
+    <string name="in_progress">प्रगति में</string>
+    <string name="empty">खाली</string>
+    <string name="target">लक्ष्य</string>
+    <string name="start">शुरू</string>
+    <string name="progress_tracker">प्रगति ट्रैकर</string>
 </resources>

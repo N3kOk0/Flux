@@ -149,8 +149,8 @@ class NotesViewModel @Inject constructor(
                 val contentState = event.contentState
 
                 viewModelScope.launch(Dispatchers.IO) {
-                    val openNoteDir = getOrCreateDirectory(context, rootUri, Constants.File.FLUX)
-                    val imagesDir = openNoteDir?.let { dir -> getOrCreateDirectory(context, dir.uri, Constants.File.FLUX_IMAGES) }
+                    val baseDir = getOrCreateDirectory(context, rootUri, Constants.File.FLUX)
+                    val imagesDir = baseDir?.let { dir -> getOrCreateDirectory(context, dir.uri, Constants.File.FLUX_IMAGES) }
                     val savedUriList = mutableListOf<String>()
                     imagesDir?.let { dir ->
                         uriList.forEachIndexed { _, uri ->
@@ -188,8 +188,8 @@ class NotesViewModel @Inject constructor(
                 val contentState = event.contentState
 
                 viewModelScope.launch(Dispatchers.IO) {
-                    val openNoteDir = getOrCreateDirectory(context, rootUri, Constants.File.FLUX)
-                    val videosDir = openNoteDir?.let { dir -> getOrCreateDirectory(context, dir.uri, Constants.File.FLUX_VIDEOS) }
+                    val baseDir = getOrCreateDirectory(context, rootUri, Constants.File.FLUX)
+                    val videosDir = baseDir?.let { dir -> getOrCreateDirectory(context, dir.uri, Constants.File.FLUX_VIDEOS) }
 
                     videosDir?.let { dir ->
                         val name = getFileName(context, uri)
@@ -218,9 +218,9 @@ class NotesViewModel @Inject constructor(
                 val rootUri = settingsRepository.getStorageRoot()
                 val contentState = event.contentState
 
-                val openNoteDir =
+                val baseDir =
                     getOrCreateDirectory(context, rootUri, Constants.File.FLUX)
-                val audioDir = openNoteDir?.let { dir ->
+                val audioDir = baseDir?.let { dir ->
                     getOrCreateDirectory(context, dir.uri, Constants.File.FLUX_AUDIO)
                 }
 

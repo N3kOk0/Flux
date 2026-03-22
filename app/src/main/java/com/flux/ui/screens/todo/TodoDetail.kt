@@ -38,6 +38,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.flux.R
@@ -124,6 +125,7 @@ fun TodoDetail(
                             Text(stringResource(R.string.Title))
                         },
                         textStyle = MaterialTheme.typography.titleLarge,
+                        keyboardOptions = KeyboardOptions.Default.copy(capitalization = KeyboardCapitalization.Words),
                         modifier = Modifier.fillMaxWidth(),
                         colors = TextFieldDefaults.colors(
                             focusedIndicatorColor = MaterialTheme.colorScheme.surfaceContainer,
@@ -165,7 +167,7 @@ fun TodoDetail(
                         singleLine = true,
                         placeholder = { Text(stringResource(R.string.Title)) },
                         modifier = Modifier.weight(1f),
-                        keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
+                        keyboardOptions = KeyboardOptions(capitalization = KeyboardCapitalization.Sentences, imeAction = ImeAction.Done),
                         colors = TextFieldDefaults.colors(
                             focusedIndicatorColor = MaterialTheme.colorScheme.surfaceContainerLow,
                             unfocusedIndicatorColor = MaterialTheme.colorScheme.surfaceContainerLow,

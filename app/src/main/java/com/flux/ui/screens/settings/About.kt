@@ -17,6 +17,7 @@ import androidx.compose.material.icons.rounded.PrivacyTip
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -36,6 +37,8 @@ import com.flux.ui.components.shapeManager
 @Composable
 fun About(navController: NavController, radius: Int) {
     val context = LocalContext.current
+    val appName = stringResource(R.string.app_name)
+    val appShareInfo = stringResource(R.string.shareContent)
 
     BasicScaffold(
         title = stringResource(R.string.About),
@@ -44,15 +47,18 @@ fun About(navController: NavController, radius: Int) {
         LazyColumn(
             modifier = Modifier
                 .padding(innerPadding)
-                .padding(16.dp, 8.dp, 16.dp)
+                .padding(16.dp, 8.dp, 16.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
             item {
                 SingleSettingOption(
                     radius,
                     stringResource(R.string.app_name),
+                    description = "Made In India",
                     leadingIcon = SettingIcon.Resource(R.mipmap.ic_launcher_foreground),
+                    trailingIcon = SettingIcon.Resource(R.drawable.india),
                     textStyle = MaterialTheme.typography.titleLarge,
-                    last = true
+                    last = true,
                 ) { }
             }
 
@@ -159,13 +165,9 @@ fun About(navController: NavController, radius: Int) {
                     actionType = ActionType.LINK,
                     linkClicked = {
                         val sendIntent = Intent(Intent.ACTION_SEND)
-                        sendIntent.setType("text/plain")
-                        sendIntent.putExtra(
-                            Intent.EXTRA_TITLE, context.getString(R.string.app_name)
-                        )
-                        sendIntent.putExtra(
-                            Intent.EXTRA_TEXT, context.getString(R.string.shareContent)
-                        )
+                        sendIntent.type = "text/plain"
+                        sendIntent.putExtra(Intent.EXTRA_TITLE, appName)
+                        sendIntent.putExtra(Intent.EXTRA_TEXT, appShareInfo)
                         context.startActivity(Intent.createChooser(sendIntent, null))
                     }
                 )

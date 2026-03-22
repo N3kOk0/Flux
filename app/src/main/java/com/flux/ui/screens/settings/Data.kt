@@ -35,6 +35,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
@@ -58,6 +59,7 @@ import com.flux.ui.components.shapeManager
 import com.flux.ui.events.SettingEvents
 import com.flux.ui.state.Settings
 import com.flux.ui.viewModel.BackupViewModel
+import kotlinx.coroutines.launch
 
 @RequiresApi(Build.VERSION_CODES.TIRAMISU)
 @OptIn(ExperimentalMaterial3Api::class)
@@ -72,14 +74,10 @@ fun Data(
 ) {
     val context = LocalContext.current
     val hapticFeedback = LocalHapticFeedback.current
+    val coroutineScope = rememberCoroutineScope()
+    val operationSuccessful = stringResource(R.string.success)
+    val operationFailed = stringResource(R.string.Failed)
     var showWarningDialog by remember { mutableStateOf(false) }
-
-    // EXPORT launcher
-    val exportLauncher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.CreateDocument("application/json")
-    ) { uri ->
-        uri?.let { backupViewModel.exportBackup(context, it) }
-    }
 
     // IMPORT launcher
     val importLauncher = rememberLauncherForActivityResult(
@@ -92,9 +90,9 @@ fun Data(
     LaunchedEffect(Unit) {
         backupViewModel.backupResult.collect { result ->
             if (result.isSuccess) {
-                Toast.makeText(context, "Operation successful!", Toast.LENGTH_LONG).show()
+                Toast.makeText(context, operationSuccessful, Toast.LENGTH_LONG).show()
             } else {
-                Toast.makeText(context, "Operation failed.", Toast.LENGTH_LONG).show()
+                Toast.makeText(context, operationFailed, Toast.LENGTH_LONG).show()
             }
         }
     }
@@ -130,7 +128,7 @@ fun Data(
                     icon = Icons.Rounded.Backup,
                     radius = shapeManager(radius = radius, isFirst = true),
                     actionType = ActionType.CUSTOM,
-                    onCustomClick = { exportLauncher.launch("flux-backup.json") }
+                    onCustomClick = { coroutineScope.launch { backupViewModel.exportBackup(context) }}
                 )
             }
 

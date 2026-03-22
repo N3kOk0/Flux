@@ -24,7 +24,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.flux.R
 import com.flux.data.model.ProgressBoardModel
 import com.flux.navigation.Loader
 import com.flux.other.icons
@@ -57,7 +59,7 @@ fun LazyListScope.progressBoardItems(
                         item {
                             BoardContainer(
                                 failed,
-                                "Not Started",
+                                stringResource(R.string.not_started),
                                 radius,
                                 notStartedItems,
                                 onClick
@@ -68,7 +70,7 @@ fun LazyListScope.progressBoardItems(
                         item {
                             BoardContainer(
                                 pending,
-                                "In Progress",
+                                stringResource(R.string.in_progress),
                                 radius,
                                 inProgressItems,
                                 onClick
@@ -80,7 +82,7 @@ fun LazyListScope.progressBoardItems(
                         item {
                             BoardContainer(
                                 completed,
-                                "Completed",
+                                stringResource(R.string.Completed),
                                 radius,
                                 completedItems,
                                 onClick

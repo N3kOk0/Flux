@@ -7,6 +7,11 @@ import androidx.lifecycle.viewModelScope
 import com.flux.data.database.FluxBackup
 import com.flux.data.database.FluxDatabase
 import com.flux.data.model.SettingsModel
+import com.flux.data.repository.SettingsRepository
+import com.flux.other.BackupFrequency
+import com.flux.other.BackupManager
+import com.flux.other.Constants
+import com.flux.other.getOrCreateDirectory
 import com.flux.other.scheduleNextReminder
 import com.flux.other.tryRestoreUriPermission
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -21,20 +26,37 @@ import kotlinx.serialization.json.Json
 @HiltViewModel
 class BackupViewModel @Inject constructor(
     private val db: FluxDatabase,
+    private val settingsRepository: SettingsRepository,
+    private val backupManager: BackupManager
 ) : ViewModel() {
 
     private val _backupResult = MutableSharedFlow<Result<Unit>>()
     val backupResult = _backupResult.asSharedFlow()
 
-    fun exportBackup(context: Context, uri: Uri) {
-        viewModelScope.launch {
-            try {
+    suspend fun exportBackup(context: Context) {
+        val rootUri = settingsRepository.getStorageRoot()
+
+        viewModelScope.launch(Dispatchers.IO) {
+            val baseDir = getOrCreateDirectory(context, rootUri, Constants.File.FLUX)
+            val backupDir = baseDir?.let { dir ->
+                getOrCreateDirectory(context, dir.uri, Constants.File.FLUX_BACKUP)
+            }
+
+            backupDir?.let { dir ->
                 val json = writeJsonBackup()
-                saveToUri(context, uri, json)
-                _backupResult.emit(Result.success(Unit))
-            } catch (e: Exception) {
-                e.printStackTrace()
-                _backupResult.emit(Result.failure(e))
+                try {
+                    val fileName = "${System.currentTimeMillis()}.json"
+                    val file = dir.createFile("application/json", fileName)
+
+                    file?.let { docFile ->
+                        saveToUri(context, docFile.uri, json)
+                    }
+
+                    _backupResult.emit(Result.success(Unit))
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                    _backupResult.emit(Result.failure(e))
+                }
             }
         }
     }
@@ -63,7 +85,8 @@ class BackupViewModel @Inject constructor(
             labels = db.labelDao.getAll(),
             events = db.eventDao.loadAllEvents(),
             eventInstances = db.eventInstanceDao.getAll(),
-            settings = db.settingsDao.loadSetting()?: SettingsModel()
+            settings = db.settingsDao.loadSetting()?: SettingsModel(),
+            progressBoardItems = db.progressBoardDao.getAllBoardItems()
         )
         Json.encodeToString(FluxBackup.serializer(), backup)
     }
@@ -83,7 +106,6 @@ class BackupViewModel @Inject constructor(
         }
 
     private suspend fun uploadBackupToDatabase(context: Context, json: String) = withContext(Dispatchers.IO) {
-        // Explicit serializer here too
         val backup = Json.decodeFromString(FluxBackup.serializer(), json)
 
         // --- Workspaces ---
@@ -151,6 +173,22 @@ class BackupViewModel @Inject constructor(
 
         merged.storageRootUri?.let {
             tryRestoreUriPermission(context, it)
+        }
+
+        val frequency = merged.backupFrequency
+        fun mapDaysToFrequency(day: Int): BackupFrequency = when (day) {
+            0 -> BackupFrequency.NEVER
+            1 -> BackupFrequency.DAILY
+            7 -> BackupFrequency.WEEKLY
+            30 -> BackupFrequency.MONTHLY
+            else -> BackupFrequency.NEVER
+        }
+
+        backupManager.scheduleBackup(mapDaysToFrequency(frequency))
+
+        // --- Progress Board ---
+        backup.progressBoardItems.forEach { item ->
+            if (!db.progressBoardDao.exists(item.workspaceId)) db.progressBoardDao.upsertBoardItem(item)
         }
     }
 }

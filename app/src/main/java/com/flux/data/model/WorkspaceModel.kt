@@ -47,6 +47,6 @@ fun getSpacesList(): List<Space> {
         Space(4, stringResource(R.string.Journal), Icons.Default.AutoStories),
         Space(5, stringResource(R.string.Habits), Icons.Default.EventAvailable),
         Space(6, stringResource(R.string.Analytics), Icons.Default.Analytics),
-        Space(7, "Progress Tracker", Icons.Default.TrackChanges)
+        Space(7, stringResource(R.string.progress_tracker), Icons.Default.TrackChanges)
     )
 }

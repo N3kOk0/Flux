@@ -35,6 +35,5 @@ class BackupManager(
 
     companion object {
         const val BACKUP_WORK_NAME = "database_backup_work"
-        const val BACKUP_FREQUENCY_KEY = "backup_frequency"
     }
 }

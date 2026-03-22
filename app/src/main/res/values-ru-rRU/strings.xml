@@ -130,6 +130,7 @@
     <string name="daily">Ежедневно</string>
     <string name="weekly">Еженедельно</string>
     <string name="monthly">Ежемесячно</string>
+    <string name="success">Успешно</string>
 
     <!-- Settings - About -->
     <string name="About">О приложении</string>
@@ -356,4 +357,11 @@
     <string name="select_folder">Выбрать папку</string>
     <string name="select_folder_description">Выберите место для хранения данных приложения, включая изображения, аудио, видео, документы и резервные копии</string>
 
+    <!-- Progress Tracker -->
+    <string name="not_started">Не начато</string>
+    <string name="in_progress">В процессе</string>
+    <string name="empty">Пусто</string>
+    <string name="target">Цель</string>
+    <string name="start">Начало</string>
+    <string name="progress_tracker">Трекер прогресса</string>
 </resources>

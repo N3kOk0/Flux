@@ -7,6 +7,7 @@ import com.flux.data.model.HabitModel
 import com.flux.data.model.JournalModel
 import com.flux.data.model.LabelModel
 import com.flux.data.model.NotesModel
+import com.flux.data.model.ProgressBoardModel
 import com.flux.data.model.SettingsModel
 import com.flux.data.model.TodoModel
 import com.flux.data.model.WorkspaceModel
@@ -23,5 +24,6 @@ data class FluxBackup(
     val labels: List<LabelModel> = emptyList(),
     val events: List<EventModel> = emptyList(),
     val eventInstances: List<EventInstanceModel> = emptyList(),
+    val progressBoardItems: List<ProgressBoardModel> = emptyList(),
     val settings: SettingsModel = SettingsModel()
 )

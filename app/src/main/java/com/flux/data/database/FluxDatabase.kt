@@ -54,287 +54,192 @@ abstract class FluxDatabase : RoomDatabase() {
     abstract val progressBoardDao: ProgressBoardDao
 }
 
+private fun SupportSQLiteDatabase.safeExec(sql: String) {
+    try { execSQL(sql) } catch (_: Exception) {}
+}
+
+private fun SupportSQLiteDatabase.columnExists(table: String, column: String): Boolean {
+    query("PRAGMA table_info($table)").use { cursor ->
+        val nameIndex = cursor.getColumnIndex("name")
+        while (cursor.moveToNext()) {
+            if (cursor.getString(nameIndex).equals(column, ignoreCase = true)) return true
+        }
+    }
+    return false
+}
+
+private fun SupportSQLiteDatabase.tableExists(table: String): Boolean {
+    query("SELECT name FROM sqlite_master WHERE type='table' AND name='$table'").use {
+        return it.moveToFirst()
+    }
+}
+
 val MIGRATION_1_2 = object : Migration(1, 2) {
     override fun migrate(db: SupportSQLiteDatabase) {
-        // Add fontNumber column with default value 0
-        db.execSQL("ALTER TABLE SettingsModel ADD COLUMN fontNumber INTEGER NOT NULL DEFAULT 0")
+        if (!db.columnExists("SettingsModel", "fontNumber"))
+            db.safeExec("ALTER TABLE SettingsModel ADD COLUMN fontNumber INTEGER NOT NULL DEFAULT 0")
     }
 }
 
 val MIGRATION_2_3 = object : Migration(2, 3) {
     override fun migrate(db: SupportSQLiteDatabase) {
-        db.execSQL("ALTER TABLE NotesModel ADD COLUMN images TEXT NOT NULL DEFAULT '[]'")
-        db.execSQL("ALTER TABLE HabitModel ADD COLUMN endDateTime INTEGER NOT NULL DEFAULT -1")
-        db.execSQL("ALTER TABLE EventModel ADD COLUMN endDateTime INTEGER NOT NULL DEFAULT -1")
+        if (!db.columnExists("NotesModel", "images"))
+            db.safeExec("ALTER TABLE NotesModel ADD COLUMN images TEXT NOT NULL DEFAULT '[]'")
+        if (!db.columnExists("HabitModel", "endDateTime"))
+            db.safeExec("ALTER TABLE HabitModel ADD COLUMN endDateTime INTEGER NOT NULL DEFAULT -1")
+        if (!db.columnExists("EventModel", "endDateTime"))
+            db.safeExec("ALTER TABLE EventModel ADD COLUMN endDateTime INTEGER NOT NULL DEFAULT -1")
     }
 }
-val MIGRATION_3_4 = object : Migration(3, 4) {
 
+val MIGRATION_3_4 = object : Migration(3, 4) {
     override fun migrate(db: SupportSQLiteDatabase) {
 
-        /* ============================================================
-           1. WorkspaceModel — selectedSpaces normalization (CRASH FIX)
-           ============================================================ */
+        // 1. WorkspaceModel selectedSpaces normalization
+        if (!db.columnExists("WorkspaceModel", "selectedSpaces_new")) {
+            db.safeExec("ALTER TABLE WorkspaceModel ADD COLUMN selectedSpaces_new TEXT NOT NULL DEFAULT ''")
+        }
 
-        db.execSQL("""
-            ALTER TABLE WorkspaceModel
-            ADD COLUMN selectedSpaces_new TEXT NOT NULL DEFAULT ''
-        """)
-
-        val wsCursor = db.query(
-            "SELECT workspaceId, selectedSpaces FROM WorkspaceModel"
-        )
-
+        val wsCursor = db.query("SELECT workspaceId, selectedSpaces FROM WorkspaceModel")
         while (wsCursor.moveToNext()) {
-
             val id = wsCursor.getString(0)
             val raw = wsCursor.getString(1) ?: ""
-
-            // ---- SAFE PARSE (CSV + JSON tolerant) ----
             val spaces = try {
                 Json.decodeFromString<List<Int>>(raw).toMutableSet()
             } catch (_: Exception) {
-                raw.split(",")
-                    .mapNotNull { it.trim().toIntOrNull() }
-                    .toMutableSet()
+                raw.split(",").mapNotNull { it.trim().toIntOrNull() }.toMutableSet()
             }
-
-            // Merge Calendar (4) → Events (3)
             if (spaces.remove(4)) spaces.add(3)
-
-            // Shift IDs > 4
-            val normalized = spaces.map {
-                if (it > 4) it - 1 else it
-            }.toSet()
-
-            // Store as CSV (since converter still CSV)
-            val newCsv = normalized.joinToString(",")
-
-            db.execSQL(
-                "UPDATE WorkspaceModel SET selectedSpaces_new = ? WHERE workspaceId = ?",
-                arrayOf(newCsv, id)
-            )
+            val normalized = spaces.map { if (it > 4) it - 1 else it }.toSet()
+            db.safeExec("UPDATE WorkspaceModel SET selectedSpaces_new = '${normalized.joinToString(",")}' WHERE workspaceId = '$id'")
         }
-
         wsCursor.close()
 
-        db.execSQL("""
-            CREATE TABLE WorkspaceModel_new (
-                workspaceId TEXT NOT NULL PRIMARY KEY,
-                title TEXT NOT NULL,
-                description TEXT NOT NULL,
-                colorInd INTEGER NOT NULL,
-                cover TEXT NOT NULL,
-                icon INTEGER NOT NULL,
-                passKey TEXT NOT NULL,
-                isPinned INTEGER NOT NULL,
-                selectedSpaces TEXT NOT NULL
-            )
-        """)
+        if (!db.tableExists("WorkspaceModel_new")) {
+            db.safeExec("""
+                CREATE TABLE WorkspaceModel_new (
+                    workspaceId TEXT NOT NULL PRIMARY KEY,
+                    title TEXT NOT NULL,
+                    description TEXT NOT NULL,
+                    colorInd INTEGER NOT NULL,
+                    cover TEXT NOT NULL,
+                    icon INTEGER NOT NULL,
+                    passKey TEXT NOT NULL,
+                    isPinned INTEGER NOT NULL,
+                    selectedSpaces TEXT NOT NULL
+                )
+            """)
+            db.safeExec("""
+                INSERT INTO WorkspaceModel_new
+                SELECT workspaceId, title, description, colorInd, cover, icon, passKey, isPinned, selectedSpaces_new
+                FROM WorkspaceModel
+            """)
+            db.safeExec("DROP TABLE WorkspaceModel")
+            db.safeExec("ALTER TABLE WorkspaceModel_new RENAME TO WorkspaceModel")
+        }
 
-        db.execSQL("""
-            INSERT INTO WorkspaceModel_new
-            SELECT
-                workspaceId, title, description, colorInd,
-                cover, icon, passKey, isPinned, selectedSpaces_new
-            FROM WorkspaceModel
-        """)
+        // 2. SettingsModel columns
+        if (!db.columnExists("SettingsModel", "storageRootUri"))
+            db.safeExec("ALTER TABLE SettingsModel ADD COLUMN storageRootUri TEXT")
+        if (!db.columnExists("SettingsModel", "startWithReadView"))
+            db.safeExec("ALTER TABLE SettingsModel ADD COLUMN startWithReadView INTEGER NOT NULL DEFAULT 0")
+        if (!db.columnExists("SettingsModel", "isLineNumbersVisible"))
+            db.safeExec("ALTER TABLE SettingsModel ADD COLUMN isLineNumbersVisible INTEGER NOT NULL DEFAULT 0")
+        if (!db.columnExists("SettingsModel", "isLintValid"))
+            db.safeExec("ALTER TABLE SettingsModel ADD COLUMN isLintValid INTEGER NOT NULL DEFAULT 0")
 
-        db.execSQL("DROP TABLE WorkspaceModel")
-        db.execSQL("ALTER TABLE WorkspaceModel_new RENAME TO WorkspaceModel")
-
-
-        /* ============================================================
-           2. SettingsModel columns (4→6)
-           ============================================================ */
-
-        db.execSQL(
-            "ALTER TABLE SettingsModel ADD COLUMN storageRootUri TEXT"
-        )
-
-        db.execSQL("""
-            ALTER TABLE SettingsModel
-            ADD COLUMN startWithReadView INTEGER NOT NULL DEFAULT 0
-        """)
-
-        db.execSQL("""
-            ALTER TABLE SettingsModel
-            ADD COLUMN isLineNumbersVisible INTEGER NOT NULL DEFAULT 0
-        """)
-
-        db.execSQL("""
-            ALTER TABLE SettingsModel
-            ADD COLUMN isLintValid INTEGER NOT NULL DEFAULT 0
-        """)
-
-
-        /* ============================================================
-           3. TodoItem ID migration (6→7)
-           ============================================================ */
-
+        // 3. TodoItem ID migration
         val todoCursor = db.query("SELECT id, items FROM TodoModel")
         val gson = Gson()
-
         while (todoCursor.moveToNext()) {
-
             val todoId = todoCursor.getString(0)
             val itemsJson = todoCursor.getString(1)
-
             try {
-                data class OldTodoItem(
-                    val value: String,
-                    val isChecked: Boolean
-                )
-
-                data class NewTodoItem(
-                    val id: String,
-                    val value: String,
-                    val isChecked: Boolean
-                )
-
+                data class OldTodoItem(val value: String, val isChecked: Boolean)
+                data class NewTodoItem(val id: String, val value: String, val isChecked: Boolean)
                 val type = object : TypeToken<List<OldTodoItem>>() {}.type
-
-                val oldItems: List<OldTodoItem> =
-                    gson.fromJson(itemsJson, type) ?: continue
-
-                val newItems = oldItems.map {
-                    NewTodoItem(
-                        id = UUID.randomUUID().toString(),
-                        value = it.value,
-                        isChecked = it.isChecked
-                    )
-                }
-
-                db.execSQL(
-                    "UPDATE TodoModel SET items = ? WHERE id = ?",
-                    arrayOf(gson.toJson(newItems), todoId)
-                )
-
-            } catch (_: Exception) {
-                // Skip malformed rows
-            }
+                val oldItems: List<OldTodoItem> = gson.fromJson(itemsJson, type) ?: continue
+                // Skip if already migrated (items already have id field)
+                if (itemsJson.contains("\"id\"")) continue
+                val newItems = oldItems.map { NewTodoItem(UUID.randomUUID().toString(), it.value, it.isChecked) }
+                db.execSQL("UPDATE TodoModel SET items = ? WHERE id = ?", arrayOf(gson.toJson(newItems), todoId))
+            } catch (_: Exception) {}
         }
-
         todoCursor.close()
 
+        // 4. Journal + Notes table rebuild
+        if (!db.tableExists("journalmodel_new")) {
+            db.safeExec("""
+                CREATE TABLE journalmodel_new (
+                    journalId TEXT NOT NULL,
+                    workspaceId TEXT NOT NULL,
+                    text TEXT NOT NULL,
+                    dateTime INTEGER NOT NULL,
+                    PRIMARY KEY(journalId)
+                )
+            """)
+            db.safeExec("INSERT INTO journalmodel_new SELECT journalId, workspaceId, text, dateTime FROM JournalModel")
+            db.safeExec("DROP TABLE JournalModel")
+            db.safeExec("ALTER TABLE journalmodel_new RENAME TO JournalModel")
+        }
 
-        /* ============================================================
-           4. Journal + Notes table rebuild (7→8)
-           ============================================================ */
+        if (!db.tableExists("NotesModel_new")) {
+            db.safeExec("""
+                CREATE TABLE NotesModel_new (
+                    notesId TEXT NOT NULL,
+                    workspaceId TEXT NOT NULL,
+                    title TEXT NOT NULL,
+                    description TEXT NOT NULL,
+                    isPinned INTEGER NOT NULL,
+                    labels TEXT NOT NULL,
+                    lastEdited INTEGER NOT NULL,
+                    PRIMARY KEY(notesId)
+                )
+            """)
+            db.safeExec("""
+                INSERT INTO NotesModel_new
+                SELECT notesId, workspaceId, title, description, isPinned, labels, lastEdited
+                FROM NotesModel
+            """)
+            db.safeExec("DROP TABLE NotesModel")
+            db.safeExec("ALTER TABLE NotesModel_new RENAME TO NotesModel")
+        }
 
-        db.execSQL("""
-            CREATE TABLE journalmodel_new (
-                journalId TEXT NOT NULL,
-                workspaceId TEXT NOT NULL,
-                text TEXT NOT NULL,
-                dateTime INTEGER NOT NULL,
-                PRIMARY KEY(journalId)
-            )
-        """)
-
-        db.execSQL("""
-            INSERT INTO journalmodel_new
-            SELECT journalId, workspaceId, text, dateTime
-            FROM JournalModel
-        """)
-
-        db.execSQL("DROP TABLE JournalModel")
-        db.execSQL(
-            "ALTER TABLE journalmodel_new RENAME TO JournalModel"
-        )
-
-
-        db.execSQL("""
-            CREATE TABLE NotesModel_new (
-                notesId TEXT NOT NULL,
-                workspaceId TEXT NOT NULL,
-                title TEXT NOT NULL,
-                description TEXT NOT NULL,
-                isPinned INTEGER NOT NULL,
-                labels TEXT NOT NULL,
-                lastEdited INTEGER NOT NULL,
-                PRIMARY KEY(notesId)
-            )
-        """)
-
-        db.execSQL("""
-            INSERT INTO NotesModel_new
-            SELECT
-                notesId,
-                workspaceId,
-                title,
-                description,
-                isPinned,
-                labels,
-                lastEdited
-            FROM NotesModel
-        """)
-
-        db.execSQL("DROP TABLE NotesModel")
-        db.execSQL(
-            "ALTER TABLE NotesModel_new RENAME TO NotesModel"
-        )
-
-
-        /* ============================================================
-           5. HTML → Markdown migration (8→9)
-           ============================================================ */
-
+        // 5. HTML → Markdown migration
         val converter = FlexmarkHtmlConverter.builder().build()
-
-        db.query(
-            "SELECT notesId, description FROM NotesModel"
-        ).use { cursor ->
-
+        db.query("SELECT notesId, description FROM NotesModel").use { cursor ->
             while (cursor.moveToNext()) {
-
                 val id = cursor.getString(0)
                 val html = cursor.getString(1) ?: continue
-
                 if (html.contains("<")) {
-
-                    val markdown = converter.convert(html)
-
-                    db.execSQL(
-                        "UPDATE NotesModel SET description = ? WHERE notesId = ?",
-                        arrayOf(markdown, id)
-                    )
+                    db.execSQL("UPDATE NotesModel SET description = ? WHERE notesId = ?",
+                        arrayOf(converter.convert(html), id))
                 }
             }
         }
-
-        db.query(
-            "SELECT journalId, text FROM JournalModel"
-        ).use { cursor ->
-
+        db.query("SELECT journalId, text FROM JournalModel").use { cursor ->
             while (cursor.moveToNext()) {
-
                 val id = cursor.getString(0)
                 val html = cursor.getString(1) ?: continue
-
                 if (html.contains("<")) {
-
-                    val markdown = converter.convert(html)
-
-                    db.execSQL(
-                        "UPDATE JournalModel SET text = ? WHERE journalId = ?",
-                        arrayOf(markdown, id)
-                    )
+                    db.execSQL("UPDATE JournalModel SET text = ? WHERE journalId = ?",
+                        arrayOf(converter.convert(html), id))
                 }
             }
         }
     }
 }
 
-val Migration_4_5 = object : Migration(4, 5) {
+val MIGRATION_4_5 = object : Migration(4, 5) {
     override fun migrate(db: SupportSQLiteDatabase) {
-        db.execSQL("ALTER TABLE SettingsModel ADD COLUMN backupFrequency INTEGER NOT NULL DEFAULT 0")
+        if (!db.columnExists("SettingsModel", "backupFrequency"))
+            db.safeExec("ALTER TABLE SettingsModel ADD COLUMN backupFrequency INTEGER NOT NULL DEFAULT 0")
     }
 }
 
 val MIGRATION_5_6 = object : Migration(5, 6) {
     override fun migrate(db: SupportSQLiteDatabase) {
-        db.execSQL("""
+        db.safeExec("""
             CREATE TABLE IF NOT EXISTS `ProgressBoardModel` (
                 `itemId` TEXT NOT NULL,
                 `workspaceId` TEXT NOT NULL,
@@ -346,6 +251,6 @@ val MIGRATION_5_6 = object : Migration(5, 6) {
                 `status` INTEGER NOT NULL,
                 PRIMARY KEY(`itemId`)
             )
-        """.trimIndent())
+        """)
     }
 }

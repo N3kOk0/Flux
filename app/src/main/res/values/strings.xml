@@ -130,6 +130,7 @@
     <string name="daily">Daily</string>
     <string name="weekly">Weekly</string>
     <string name="monthly">Monthly</string>
+    <string name="success">Success</string>
 
     <!-- Settings - About -->
     <string name="About">About</string>
@@ -361,4 +362,11 @@
     <string name="select_folder">Select Folder</string>
     <string name="select_folder_description">Select where to store app data including images, audio, videos, documents, backup</string>
 
+    <!-- Progress Tracker -->
+    <string name="not_started">Not Started</string>
+    <string name="in_progress">In Progress</string>
+    <string name="empty">Empty</string>
+    <string name="target">Target</string>
+    <string name="start">Start</string>
+    <string name="progress_tracker">Progress Tracker</string>
 </resources>

@@ -1,0 +1,3 @@
+* New Space Addition: Progress Tracker
+* Database Migration query to be crash-free
+* AutoCapitalization on all the text fields

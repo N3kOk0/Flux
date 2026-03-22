@@ -2,6 +2,7 @@ package com.flux.di
 
 import android.content.Context
 import androidx.room.Room
+import androidx.work.WorkManager
 import com.flux.data.dao.EventDao
 import com.flux.data.dao.EventInstanceDao
 import com.flux.data.dao.HabitInstanceDao
@@ -17,8 +18,9 @@ import com.flux.data.database.FluxDatabase
 import com.flux.data.database.MIGRATION_1_2
 import com.flux.data.database.MIGRATION_2_3
 import com.flux.data.database.MIGRATION_3_4
+import com.flux.data.database.MIGRATION_4_5
 import com.flux.data.database.MIGRATION_5_6
-import com.flux.data.database.Migration_4_5
+import com.flux.other.BackupManager
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -38,7 +40,7 @@ object DataModule {
         FluxDatabase::class.java,
         "FluxDatabase"
     )
-        .addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4, Migration_4_5, MIGRATION_5_6)
+        .addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5, MIGRATION_5_6)
         .build()
 
     @Singleton
@@ -84,4 +86,8 @@ object DataModule {
     @Singleton
     @Provides
     fun provideProgressBoardDao(db: FluxDatabase): ProgressBoardDao = db.progressBoardDao
+
+    @Singleton
+    @Provides
+    fun provideBackupManager(@ApplicationContext context: Context): BackupManager = BackupManager(WorkManager.getInstance(context))
 }

@@ -150,6 +150,7 @@ fun WorkspaceDetails(
     val analyticsLabel = stringResource(R.string.Analytics)
     val importSuccess = stringResource(R.string.import_success)
     val importFailed = stringResource(R.string.import_failed)
+    val progressTrackerLabel = stringResource(R.string.progress_tracker)
     val radius = settings.data.cornerRadius
     val is24HourFormat = settings.data.is24HourFormat
     val context = LocalContext.current
@@ -347,7 +348,7 @@ fun WorkspaceDetails(
                         if (spacesList.find { it.id == selectedSpaceId.intValue }?.title == stringResource(R.string.To_Do)) {
                             TodoToolBar(navController, workspaceId)
                         }
-                        if (spacesList.find { it.id == selectedSpaceId.intValue }?.title == "Progress Tracker") {
+                        if (spacesList.find { it.id == selectedSpaceId.intValue }?.title == stringResource(R.string.progress_tracker)) {
                             ProgressTrackerToolBar{
                                 addProgressItem=true
                                 selectedProgressBoardItem = ProgressBoardModel(workspaceId=workspaceId)
@@ -425,7 +426,7 @@ fun WorkspaceDetails(
                     allEventInstances
                 )
             }
-            if(spacesList.find { it.id == selectedSpaceId.intValue }?.title == "Progress Tracker"){
+            if(spacesList.find { it.id == selectedSpaceId.intValue }?.title == progressTrackerLabel){
                 progressBoardItems(isProgressBoardLoading, radius, allProgressBoardItems) {
                     addProgressItem=true
                     selectedProgressBoardItem=it

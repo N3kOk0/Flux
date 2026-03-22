@@ -22,7 +22,10 @@ interface ProgressBoardDao {
     @Query("Delete FROM ProgressBoardModel where workspaceId = :workspaceId")
     suspend fun deleteBoardItemsByWorkspace(workspaceId: String)
 
+    @Query("SELECT EXISTS(SELECT 1 FROM ProgressBoardModel WHERE itemId = :id)")
+    suspend fun exists(id: String): Boolean
+
     @Query("SELECT * FROM ProgressBoardModel")
-    fun getAllBoardItems(): Flow<List<ProgressBoardModel>>
+    fun getAllBoardItems(): List<ProgressBoardModel>
 }
 

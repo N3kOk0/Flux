@@ -75,7 +75,7 @@ fun Themes(
             verticalArrangement = Arrangement.SpaceBetween
         ) {
             item {
-                OutlinedCard(modifier = Modifier.height(400.dp).width(210.dp)) {
+                OutlinedCard(modifier = Modifier.height(360.dp).width(200.dp)) {
                     Column(
                         modifier = Modifier
                             .fillMaxSize()
@@ -95,7 +95,7 @@ fun Themes(
                         Card(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .height(120.dp),
+                                .height(100.dp),
                             colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primary)
                         ) {}
 
@@ -103,13 +103,13 @@ fun Themes(
                             Card(
                                 modifier = Modifier
                                     .weight(1f)
-                                    .height(120.dp),
+                                    .height(100.dp),
                                 colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.secondary)
                             ) {}
                             Card(
                                 modifier = Modifier
                                     .weight(1f)
-                                    .height(120.dp),
+                                    .height(100.dp),
                                 colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.tertiary)
                             ) {}
                         }
@@ -130,6 +130,7 @@ fun Themes(
             }
 
             item {
+                Spacer(Modifier.height(16.dp))
                 Card(modifier = Modifier.fillMaxWidth()) {
                     Column(Modifier.fillMaxWidth().padding(16.dp)) {
                         Text(

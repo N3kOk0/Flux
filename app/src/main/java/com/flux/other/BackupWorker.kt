@@ -39,11 +39,12 @@ class BackupWorker(
             val labelDao = DataModule.provideLabelDao(fluxDatabase)
             val eventDao = DataModule.provideEventDao(fluxDatabase)
             val eventInstanceDao = DataModule.provideEventInstanceDao(fluxDatabase)
+            val progressBoardDao = DataModule.provideProgressBoardDao(fluxDatabase)
             val settings = settingsDao.loadSetting()
             val rootUri = settings?.storageRootUri?.toUri()?: "".toUri()
 
-            val openNoteDir = getOrCreateDirectory(context, rootUri, Constants.File.FLUX)
-            val backupDir = openNoteDir?.let { dir ->
+            val baseDir = getOrCreateDirectory(context, rootUri, Constants.File.FLUX)
+            val backupDir = baseDir?.let { dir ->
                 getOrCreateDirectory(context, dir.uri, Constants.File.FLUX_BACKUP)
             }
             backupDir?.let { dir ->
@@ -57,7 +58,8 @@ class BackupWorker(
                     labels = labelDao.getAll(),
                     events = eventDao.loadAllEvents(),
                     eventInstances = eventInstanceDao.getAll(),
-                    settings = settingsDao.loadSetting()?: SettingsModel()
+                    settings = settingsDao.loadSetting()?: SettingsModel(),
+                    progressBoardItems = progressBoardDao.getAllBoardItems()
                 )
                 val json = Json.encodeToString(FluxBackup.serializer(), backup)
 

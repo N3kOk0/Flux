@@ -62,12 +62,15 @@ import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.fastJoinToString
 import androidx.navigation.NavController
+import com.flux.R
 import com.flux.data.model.LabelModel
 import com.flux.data.model.NotesModel
 import com.flux.navigation.NavRoutes
@@ -336,7 +339,7 @@ fun NoteDetails(
                         lineLimits = TextFieldLineLimits.SingleLine,
                         textStyle = MaterialTheme.typography.headlineSmall.copy(color = MaterialTheme.colorScheme.onSurfaceVariant, fontWeight = FontWeight.SemiBold),
                         cursorBrush = SolidColor(MaterialTheme.colorScheme.primary),
-                        keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
+                        keyboardOptions = KeyboardOptions(capitalization = KeyboardCapitalization.Words, imeAction = ImeAction.Next),
                         decorator = { innerTextField ->
                             TextFieldDefaults.DecorationBox(
                                 value = titleState.text.toString(),
@@ -348,7 +351,7 @@ fun NoteDetails(
                                 placeholder = {
                                     Text(
                                         modifier = Modifier.fillMaxWidth(),
-                                        text = "Title",
+                                        text = stringResource(R.string.Title),
                                         style = MaterialTheme.typography.headlineSmall.copy(color = MaterialTheme.colorScheme.onSurfaceVariant, fontWeight = FontWeight.SemiBold)
                                     )
                                 },
