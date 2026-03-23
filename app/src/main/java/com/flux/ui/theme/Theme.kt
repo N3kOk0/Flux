@@ -14,6 +14,8 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
 import com.flux.ui.state.Settings
+import android.text.format.DateFormat
+import com.flux.ui.events.SettingEvents
 
 @Composable
 fun getColorScheme(
@@ -104,6 +106,7 @@ private val highContrastDarkColorSchemes = listOf(
 )
 
 val FLUX_FONT = listOf(
+    SYSTEM,
     Poppins,
     Sansation,
     Newsreader,
@@ -113,6 +116,7 @@ val FLUX_FONT = listOf(
 )
 
 val FONTS = listOf(
+    "System",
     "Poppins",
     "Sansation",
     "Newsreader",
@@ -123,6 +127,7 @@ val FONTS = listOf(
 @Composable
 fun FluxTheme(
     settings: Settings,
+    onSettingEvents: (SettingEvents) -> Unit,
     content: @Composable () -> Unit
 ) {
     val data = settings.data
@@ -140,6 +145,7 @@ fun FluxTheme(
     val fontNumber = data.fontNumber
 
     val activity = LocalView.current.context as Activity
+    val context = LocalContext.current
     val insetsController = WindowCompat.getInsetsController(activity.window, activity.window.decorView)
     insetsController.isAppearanceLightStatusBars = !darkTheme
 
@@ -147,6 +153,16 @@ fun FluxTheme(
         activity.window.addFlags(WindowManager.LayoutParams.FLAG_SECURE)
     } else {
         activity.window.clearFlags(WindowManager.LayoutParams.FLAG_SECURE)
+    }
+
+    if(settings.data.useSystemTimeFormat){
+        val is24Hour = DateFormat.is24HourFormat(context)
+
+        if (is24Hour && !settings.data.is24HourFormat) {
+            onSettingEvents(SettingEvents.UpdateSettings(settings.data.copy(is24HourFormat=true)))
+        } else if(!is24Hour && settings.data.is24HourFormat) {
+            onSettingEvents(SettingEvents.UpdateSettings(settings.data.copy(is24HourFormat=false)))
+        }
     }
 
     MaterialTheme(

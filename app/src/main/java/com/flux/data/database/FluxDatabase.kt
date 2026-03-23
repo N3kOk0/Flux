@@ -36,7 +36,7 @@ import java.util.UUID
 
 @Database(
     entities = [EventModel::class, LabelModel::class, EventInstanceModel::class, SettingsModel::class, NotesModel::class, HabitModel::class, HabitInstanceModel::class, WorkspaceModel::class, TodoModel::class, JournalModel::class, ProgressBoardModel::class],
-    version = 6,
+    version = 7,
     exportSchema = false
 )
 @TypeConverters(Converter::class)
@@ -252,5 +252,12 @@ val MIGRATION_5_6 = object : Migration(5, 6) {
                 PRIMARY KEY(`itemId`)
             )
         """)
+    }
+}
+
+val MIGRATION_6_7 = object : Migration(6, 7) {
+    override fun migrate(db: SupportSQLiteDatabase) {
+        if (!db.columnExists("SettingsModel", "useSystemTimeFormat"))
+            db.safeExec("ALTER TABLE SettingsModel ADD COLUMN useSystemTimeFormat INTEGER NOT NULL DEFAULT 0")
     }
 }

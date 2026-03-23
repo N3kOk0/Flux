@@ -90,7 +90,7 @@ class MainActivity : AppCompatActivity() {
             )
 
             if (!settings.isLoading) {
-                FluxTheme(settings) {
+                FluxTheme(settings, settingsViewModel::onEvent) {
                     Surface(
                         modifier = Modifier.fillMaxSize(),
                         color = MaterialTheme.colorScheme.surfaceContainerLow

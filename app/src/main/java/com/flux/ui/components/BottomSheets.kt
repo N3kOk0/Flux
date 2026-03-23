@@ -845,7 +845,8 @@ fun NewBoardItemSheet(
     sheetState: SheetState,
     progressBoardItem: ProgressBoardModel,
     onDismiss: () -> Unit,
-    onConfirm: (ProgressBoardModel) -> Unit
+    onConfirm: (ProgressBoardModel) -> Unit,
+    onDelete: (ProgressBoardModel) -> Unit
 ) {
     val focusRequesterDesc = remember { FocusRequester() }
     val keyboardController = LocalSoftwareKeyboardController.current
@@ -989,6 +990,7 @@ fun NewBoardItemSheet(
                             onClick = {
                                 keyboardController?.hide()
                                 onDismiss()
+                                onDelete(progressBoardItem)
                             },
                             colors = ButtonDefaults.buttonColors(
                                 containerColor = MaterialTheme.colorScheme.errorContainer,

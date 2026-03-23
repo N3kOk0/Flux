@@ -3,6 +3,7 @@ package com.flux.other
 import android.Manifest
 import android.app.Activity
 import android.app.AlarmManager
+import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
@@ -40,6 +41,7 @@ class ReminderReceiver : BroadcastReceiver() {
     }
 
     override fun onReceive(context: Context, intent: Intent) {
+
         // ─────────────────────────────────────────────
         // MARK DONE ACTION
         // ─────────────────────────────────────────────
@@ -55,91 +57,91 @@ class ReminderReceiver : BroadcastReceiver() {
         // ─────────────────────────────────────────────
         // EXTRACT PAYLOAD
         // ─────────────────────────────────────────────
-        val title =
-            intent.getStringExtra("TITLE") ?: "Reminder"
+        val title = intent.getStringExtra("TITLE") ?: "Reminder"
 
-        val description =
-            intent.getStringExtra("DESCRIPTION")
-                ?: "It's time to complete pending things"
+        val description = intent.getStringExtra("DESCRIPTION")
+            ?: "It's time to complete pending things"
 
         val id = intent.getStringExtra("ID") ?: return
-        val workspaceId =
-            intent.getStringExtra("WORKSPACE_ID") ?: ""
+        val workspaceId = intent.getStringExtra("WORKSPACE_ID") ?: ""
+        val type = intent.getStringExtra("TYPE") ?: "EVENT"
 
-        val type =
-            intent.getStringExtra("TYPE") ?: "EVENT"
+        val endTimeInMillis = intent.getLongExtra("ENDTIME", -1L)
+        val startDateTime = intent.getLongExtra("START_TIME", -1L)
+        val offset = intent.getLongExtra("OFFSET", 0L)
 
-        val endTimeInMillis =
-            intent.getLongExtra("ENDTIME", -1L)
-
-        val startDateTime =
-            intent.getLongExtra("START_TIME", -1L)
-
-        val offset =
-            intent.getLongExtra("OFFSET", 0L)
-
-        // Guard against corrupted / legacy alarms
         if (startDateTime <= 0L) return
 
-        // Deserialize recurrence rule
-        val recurrenceJson =
-            intent.getStringExtra("RECURRENCE")
-
-        val recurrence =
-            recurrenceJson?.let {
-                Json.decodeFromString<RecurrenceRule>(it)
-            } ?: RecurrenceRule.Once
+        // ─────────────────────────────────────────────
+        // TYPE SAFE CHECK
+        // ─────────────────────────────────────────────
+        val reminderType = ReminderType.valueOf(type)
+        val isHabit = reminderType == ReminderType.HABIT
 
         // ─────────────────────────────────────────────
-        // SHOW NOTIFICATION
+        // DESERIALIZE RECURRENCE
+        // ─────────────────────────────────────────────
+        val recurrenceJson = intent.getStringExtra("RECURRENCE")
+
+        val recurrence = recurrenceJson?.let {
+            Json.decodeFromString<RecurrenceRule>(it)
+        } ?: RecurrenceRule.Once
+
+        // ─────────────────────────────────────────────
+        // NOTIFICATION SETUP
         // ─────────────────────────────────────────────
         val icon =
-            if (type == "EVENT")
+            if (reminderType == ReminderType.EVENT)
                 R.drawable.check_list
             else
                 R.drawable.calendar_check
 
-        val notificationId =
-            getUniqueRequestCode(type, id)
+        val notificationId = getUniqueRequestCode(type, id)
 
-        val doneIntent =
-            Intent(context, ReminderReceiver::class.java).apply {
-                action = ACTION_MARK_DONE
-                putExtra("ID", id)
-                putExtra("TYPE", type)
-                putExtra("WORKSPACE_ID", workspaceId)
-            }
+        val doneIntent = Intent(context, ReminderReceiver::class.java).apply {
+            action = ACTION_MARK_DONE
+            putExtra("ID", id)
+            putExtra("TYPE", type)
+            putExtra("WORKSPACE_ID", workspaceId)
+        }
 
-        val donePendingIntent =
-            PendingIntent.getBroadcast(
-                context,
-                notificationId,
-                doneIntent,
-                PendingIntent.FLAG_IMMUTABLE or
-                        PendingIntent.FLAG_UPDATE_CURRENT
+        val donePendingIntent = PendingIntent.getBroadcast(
+            context,
+            notificationId,
+            doneIntent,
+            PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
+        )
+
+        val builder = NotificationCompat.Builder(context, "notification_channel")
+            .setSmallIcon(icon)
+            .setContentTitle(title)
+            .setContentText(description)
+            .setPriority(NotificationCompat.PRIORITY_MAX)
+            .setCategory(NotificationCompat.CATEGORY_REMINDER)
+
+        // ─────────────────────────────────────────────
+        // CONDITIONAL STICKY BEHAVIOR
+        // ─────────────────────────────────────────────
+        if (isHabit) {
+            builder
+                .setOngoing(true)      // sticky
+                .setAutoCancel(false) // cannot auto dismiss
+        } else {
+            builder
+                .setOngoing(false)
+                .setAutoCancel(true)  // normal dismiss
+        }
+
+        val notification = builder
+            .addAction(
+                R.drawable.check_list,
+                "Done",
+                donePendingIntent
             )
-
-        val notification =
-            NotificationCompat.Builder(
-                context,
-                "notification_channel"
-            )
-                .setSmallIcon(icon)
-                .setContentTitle(title)
-                .setContentText(description)
-                .setPriority(NotificationCompat.PRIORITY_HIGH)
-                .setAutoCancel(true)
-                .addAction(
-                    R.drawable.check_list,
-                    "Done",
-                    donePendingIntent
-                )
-                .build()
+            .build()
 
         val manager =
-            context.getSystemService(
-                Context.NOTIFICATION_SERVICE
-            ) as NotificationManager
+            context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
         manager.notify(notificationId, notification)
 
@@ -151,8 +153,7 @@ class ReminderReceiver : BroadcastReceiver() {
             override val title = title
             override val description = description
             override val recurrence = recurrence
-            override val type =
-                ReminderType.valueOf(type)
+            override val type = reminderType
             override val startDateTime = startDateTime
             override val endDateTime = endTimeInMillis
             override val workspaceId = workspaceId
@@ -294,6 +295,8 @@ fun createNotificationChannel(context: Context) {
 
     val importance = NotificationManager.IMPORTANCE_HIGH
     val channel = NotificationChannel("notification_channel", "Reminders", importance)
+    channel.enableVibration(true)
+    channel.lockscreenVisibility = Notification.VISIBILITY_PUBLIC
     val manager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
     manager.createNotificationChannel(channel)
 }

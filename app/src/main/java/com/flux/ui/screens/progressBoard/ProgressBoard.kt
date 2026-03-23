@@ -13,6 +13,7 @@ import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Flag
+import androidx.compose.material.icons.filled.HourglassEmpty
 import androidx.compose.material.icons.filled.Timelapse
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -45,6 +46,7 @@ fun LazyListScope.progressBoardItems(
 ){
     when {
         isLoading -> item { Loader() }
+        boardItems.isEmpty() -> item { EmptyProgressItems() }
         else ->
             item {
                 val notStartedItems = boardItems.filter { it.status == 0 }
@@ -176,5 +178,23 @@ fun BoardContainer(
                 }
             }
         }
+    }
+}
+
+@Composable
+fun EmptyProgressItems() {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(top = 24.dp),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Icon(
+            imageVector = Icons.Default.HourglassEmpty,
+            contentDescription = null,
+            modifier = Modifier.size(48.dp)
+        )
+        Text("Empty! No Data Found")
     }
 }

@@ -506,7 +506,7 @@ fun WorkspaceDetails(
 
             removeSpaceData(
                 workspaceId, spaceId, context, onTaskEvents, onTodoEvents,
-                onHabitEvents, onNotesEvents, onJournalEvents
+                onHabitEvents, onNotesEvents, onJournalEvents, onProgressBoardEvents
             )
         },
         onSelect = {
@@ -555,10 +555,13 @@ fun WorkspaceDetails(
         }
     )
 
-    NewBoardItemSheet(addProgressItem, sheetState, selectedProgressBoardItem, { addProgressItem=false }) {
-        addProgressItem=false
-        onProgressBoardEvents(ProgressBoardEvents.UpsertProgressItem(it))
-        selectedProgressBoardItem=ProgressBoardModel(workspaceId=workspaceId)
+    NewBoardItemSheet(addProgressItem, sheetState, selectedProgressBoardItem,
+        { addProgressItem=false }, {
+            addProgressItem=false
+            onProgressBoardEvents(ProgressBoardEvents.UpsertProgressItem(it))
+            selectedProgressBoardItem=ProgressBoardModel(workspaceId=workspaceId)
+        }) {
+        onProgressBoardEvents(ProgressBoardEvents.DeleteProgressItem(it))
     }
 
     if(showDeleteDialog){
@@ -580,7 +583,8 @@ fun removeSpaceData(
     onTodoEvents: (TodoEvents) -> Unit,
     onHabitEvents: (HabitEvents) -> Unit,
     onNotesEvents: (NotesEvents) -> Unit,
-    onJournalEvents: (JournalEvents) -> Unit
+    onJournalEvents: (JournalEvents) -> Unit,
+    onProgressBoardEvents: (ProgressBoardEvents) -> Unit
 ) {
     when (spaceId) {
         1 -> onNotesEvents(NotesEvents.DeleteAllWorkspaceNotes(workspaceId))
@@ -588,5 +592,6 @@ fun removeSpaceData(
         3 -> onTaskEvents(TaskEvents.DeleteAllWorkspaceEvents(workspaceId, context))
         5 -> onJournalEvents(JournalEvents.DeleteWorkspaceEntries(workspaceId))
         6 -> onHabitEvents(HabitEvents.DeleteAllWorkspaceHabits(workspaceId, context))
+        7 -> onProgressBoardEvents(ProgressBoardEvents.DeleteBoardItemsByWorkspace(workspaceId))
     }
 }

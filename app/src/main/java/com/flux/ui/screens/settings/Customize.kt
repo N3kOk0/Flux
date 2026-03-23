@@ -13,6 +13,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccessTime
+import androidx.compose.material.icons.filled.AutoMode
 import androidx.compose.material.icons.filled.Colorize
 import androidx.compose.material.icons.filled.LightMode
 import androidx.compose.material.icons.rounded.FontDownload
@@ -149,7 +150,7 @@ fun Customize(
                     title = stringResource(R.string.Compact_Mode),
                     description = stringResource(R.string.Compact_Mode_Desc),
                     icon = Icons.Rounded.ViewCompactAlt,
-                    radius = shapeManager(radius = settings.data.cornerRadius),
+                    radius = shapeManager(radius = settings.data.cornerRadius, isLast = settings.data.workspaceGridColumns == 1),
                     variable = settings.data.workspaceGridColumns > 1,
                     actionType = ActionType.SWITCH,
                     switchEnabled = {
@@ -180,7 +181,7 @@ fun Customize(
                     description = stringResource(R.string.Extreme_Compact_Mode_Desc),
                     icon = Icons.Rounded.ViewCompact,
                     isEnabled = isEnabled,
-                    radius = shapeManager(radius = settings.data.cornerRadius),
+                    radius = shapeManager(radius = settings.data.cornerRadius, isLast = true),
                     variable = settings.data.workspaceGridColumns == 3,
                     actionType = ActionType.SWITCH,
                     switchEnabled = {
@@ -206,26 +207,54 @@ fun Customize(
             }
 
             item {
+                Spacer(Modifier.height(12.dp))
+
                 SettingOption(
-                    title = stringResource(R.string.Hour_Format_24),
-                    description = stringResource(R.string.Hour_Format_24_Desc),
-                    icon = Icons.Filled.AccessTime,
+                    title = "System Time Format",
+                    description = "Automatically adapts to system time format",
+                    icon = Icons.Filled.AutoMode,
                     radius = shapeManager(
                         radius = settings.data.cornerRadius,
-                        isLast = true
+                        isFirst = !settings.data.useSystemTimeFormat,
+                        isBoth = settings.data.useSystemTimeFormat
                     ),
                     actionType = ActionType.SWITCH,
-                    variable = settings.data.is24HourFormat,
+                    variable = settings.data.useSystemTimeFormat,
                     switchEnabled = {
                         onSettingsEvents(
                             SettingEvents.UpdateSettings(
                                 settings.data.copy(
-                                    is24HourFormat = it
+                                    useSystemTimeFormat = it
                                 )
                             )
                         )
                     }
                 )
+            }
+
+            if(!settings.data.useSystemTimeFormat){
+                item {
+                    SettingOption(
+                        title = stringResource(R.string.Hour_Format_24),
+                        description = stringResource(R.string.Hour_Format_24_Desc),
+                        icon = Icons.Filled.AccessTime,
+                        radius = shapeManager(
+                            radius = settings.data.cornerRadius,
+                            isLast = true
+                        ),
+                        actionType = ActionType.SWITCH,
+                        variable = settings.data.is24HourFormat,
+                        switchEnabled = {
+                            onSettingsEvents(
+                                SettingEvents.UpdateSettings(
+                                    settings.data.copy(
+                                        is24HourFormat = it
+                                    )
+                                )
+                            )
+                        }
+                    )
+                }
             }
 
             item {
