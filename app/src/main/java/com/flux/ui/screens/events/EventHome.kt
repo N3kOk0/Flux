@@ -43,7 +43,6 @@ import com.flux.ui.components.DailyViewCalendar
 import com.flux.ui.components.MonthlyViewCalendar
 import com.flux.ui.components.shapeManager
 import com.flux.ui.events.TaskEvents
-import com.flux.ui.state.Settings
 import java.text.SimpleDateFormat
 import java.time.Instant
 import java.time.LocalDate
@@ -57,19 +56,17 @@ import java.util.Locale
 fun LazyListScope.eventHomeItems(
     navController: NavController,
     radius: Int,
+    isMonthlyView: Boolean,
     is24HourFormat: Boolean,
     isLoading: Boolean,
     workspaceId: String,
     selectedMonth: YearMonth,
     selectedDate: Long,
     monthlyEventCount: Map<LocalDate, Int>,
-    settings: Settings,
     datedEvents: List<EventModel>,
     allEventInstances: List<EventInstanceModel>,
     onTaskEvents: (TaskEvents) -> Unit
 ) {
-    val isMonthlyView = settings.data.isCalendarMonthlyView
-
     if (isMonthlyView) {
         item {
             MonthlyViewCalendar(

@@ -105,50 +105,54 @@ fun Editor(
                 }
                 Spacer(Modifier.height(12.dp))
 
-                AnimatedVisibility(visible = !settings.data.dynamicTheme) {
-                    SingleChoiceSegmentedButtonRow(
-                        modifier = Modifier.fillMaxWidth()
+                SingleChoiceSegmentedButtonRow(
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    SegmentedButton(
+                        selected = settings.data.startWithReadView,
+                        onClick = {
+                            onSettingsEvents(
+                                SettingEvents.UpdateSettings(
+                                    settings.data.copy(startWithReadView = true)
+                                )
+                            )
+                        },
+                        shape = SegmentedButtonDefaults.itemShape(
+                            index = 0,
+                            count = 2
+                        ),
+                        modifier = Modifier.weight(1f)
                     ) {
-                        SegmentedButton(
-                            selected = settings.data.startWithReadView,
-                            onClick = {
-                                onSettingsEvents(
-                                    SettingEvents.UpdateSettings(
-                                        settings.data.copy(startWithReadView = true)
-                                    )
-                                )
-                            },
-                            shape = SegmentedButtonDefaults.itemShape(
-                                index = 0,
-                                count = 2
-                            ),
-                            modifier = Modifier.weight(1f)
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(4.dp)
                         ) {
-                            Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(4.dp)) {
-                                Icon(Icons.AutoMirrored.Filled.ChromeReaderMode, null)
-                                Text(stringResource(R.string.reading_view))
-                            }
+                            Icon(Icons.AutoMirrored.Filled.ChromeReaderMode, null)
+                            Text(stringResource(R.string.reading_view))
                         }
+                    }
 
-                        SegmentedButton(
-                            selected = !settings.data.startWithReadView,
-                            onClick = {
-                                onSettingsEvents(
-                                    SettingEvents.UpdateSettings(
-                                        settings.data.copy(startWithReadView = false)
-                                    )
+                    SegmentedButton(
+                        selected = !settings.data.startWithReadView,
+                        onClick = {
+                            onSettingsEvents(
+                                SettingEvents.UpdateSettings(
+                                    settings.data.copy(startWithReadView = false)
                                 )
-                            },
-                            shape = SegmentedButtonDefaults.itemShape(
-                                index = 1,
-                                count = 2
-                            ),
-                            modifier = Modifier.weight(1f)
+                            )
+                        },
+                        shape = SegmentedButtonDefaults.itemShape(
+                            index = 1,
+                            count = 2
+                        ),
+                        modifier = Modifier.weight(1f)
+                    ) {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(4.dp)
                         ) {
-                            Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(4.dp)) {
-                                Icon(Icons.Default.EditNote, null)
-                                Text(stringResource(R.string.editing_view))
-                            }
+                            Icon(Icons.Default.EditNote, null)
+                            Text(stringResource(R.string.editing_view))
                         }
                     }
                 }

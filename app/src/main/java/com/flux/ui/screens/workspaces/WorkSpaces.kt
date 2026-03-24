@@ -5,10 +5,10 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.GridItemSpan
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
+import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
+import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridItemSpan
+import androidx.compose.foundation.lazy.staggeredgrid.items
 import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
@@ -127,35 +127,32 @@ fun WorkSpaces(
         snackbarHost = { SnackbarHost(snackbarHostState) }
     ) { innerPadding ->
         if (allSpaces.isEmpty()) { EmptySpaces() } else {
-            val spacing = when (gridColumns) {
-                1 -> 6.dp
-                2 -> 4.dp
-                else -> 2.dp
+            val vSpacing = when (gridColumns) {
+                1 -> 12.dp
+                2 -> 16.dp
+                else -> 10.dp
             }
-            LazyVerticalGrid(
-                columns = GridCells.Fixed(gridColumns),
+            LazyVerticalStaggeredGrid(
+                columns = StaggeredGridCells.Fixed(gridColumns),
                 modifier = Modifier
                     .padding(innerPadding)
                     .fillMaxSize()
-                    .padding(vertical = 16.dp, horizontal = 4.dp),
-                horizontalArrangement = Arrangement.spacedBy(spacing),
-                verticalArrangement = Arrangement.spacedBy(spacing)
+                    .padding(vertical = 16.dp, horizontal = 8.dp),
+                horizontalArrangement = Arrangement.spacedBy(1.dp),
+                verticalItemSpacing = vSpacing
             ) {
                 if (allSpaces.none {
-                        it.title.contains(
-                            query,
-                            ignoreCase = true
-                        ) || it.description.contains(query, ignoreCase = true)
+                        it.title.contains(query, ignoreCase = true) ||
+                                it.description.contains(query, ignoreCase = true)
                     }) {
-                    item(span = { GridItemSpan(maxLineSpan) }) { EmptySpaces() }
+                    item(span = StaggeredGridItemSpan.FullLine) { EmptySpaces() }
                 }
+
                 if (allSpaces.any {
-                        it.isPinned && (it.title.contains(
-                            query,
-                            ignoreCase = true
-                        ) || it.description.contains(query, ignoreCase = true))
+                        it.isPinned && (it.title.contains(query, ignoreCase = true) ||
+                                it.description.contains(query, ignoreCase = true))
                     }) {
-                    item(span = { GridItemSpan(maxLineSpan) }) {
+                    item(span = StaggeredGridItemSpan.FullLine) {
                         Text(
                             stringResource(R.string.Pinned),
                             color = MaterialTheme.colorScheme.primary,
@@ -164,11 +161,10 @@ fun WorkSpaces(
                         )
                     }
                 }
+
                 items(allSpaces.filter {
-                    it.isPinned && (it.title.contains(
-                        query,
-                        ignoreCase = true
-                    ) || it.description.contains(query, ignoreCase = true))
+                    it.isPinned && (it.title.contains(query, ignoreCase = true) ||
+                            it.description.contains(query, ignoreCase = true))
                 }) { space ->
                     WorkspaceCard(
                         gridColumns = gridColumns,
@@ -181,22 +177,17 @@ fun WorkSpaces(
                         isSelected = selectedWorkspace.contains(space),
                         onClick = { handleWorkspaceClick(space) },
                         onLongPressed = {
-                            if(selectedWorkspace.contains(space)){
-                                selectedWorkspace.remove(space)
-                            }
-                            else{
-                                selectedWorkspace.add(space)
-                            }
+                            if (selectedWorkspace.contains(space)) selectedWorkspace.remove(space)
+                            else selectedWorkspace.add(space)
                         }
                     )
                 }
+
                 if (allSpaces.any {
-                        it.isPinned && (it.title.contains(
-                            query,
-                            ignoreCase = true
-                        ) || it.description.contains(query, ignoreCase = true))
+                        it.isPinned && (it.title.contains(query, ignoreCase = true) ||
+                                it.description.contains(query, ignoreCase = true))
                     }) {
-                    item(span = { GridItemSpan(maxLineSpan) }) {
+                    item(span = StaggeredGridItemSpan.FullLine) {
                         Text(
                             stringResource(R.string.Others),
                             modifier = Modifier.padding(vertical = 8.dp),
@@ -205,11 +196,10 @@ fun WorkSpaces(
                         )
                     }
                 }
+
                 items(allSpaces.filter {
-                    !it.isPinned && (it.title.contains(
-                        query,
-                        ignoreCase = true
-                    ) || it.description.contains(query, ignoreCase = true))
+                    !it.isPinned && (it.title.contains(query, ignoreCase = true) ||
+                            it.description.contains(query, ignoreCase = true))
                 }) { space ->
                     WorkspaceCard(
                         gridColumns = gridColumns,
@@ -222,12 +212,8 @@ fun WorkSpaces(
                         isSelected = selectedWorkspace.contains(space),
                         onClick = { handleWorkspaceClick(space) },
                         onLongPressed = {
-                            if(selectedWorkspace.contains(space)){
-                                selectedWorkspace.remove(space)
-                            }
-                            else{
-                                selectedWorkspace.add(space)
-                            }
+                            if (selectedWorkspace.contains(space)) selectedWorkspace.remove(space)
+                            else selectedWorkspace.add(space)
                         }
                     )
                 }

@@ -32,6 +32,11 @@ class BackupViewModel @Inject constructor(
 
     private val _backupResult = MutableSharedFlow<Result<Unit>>()
     val backupResult = _backupResult.asSharedFlow()
+    private val backupJson = Json {
+        ignoreUnknownKeys = true   // old backups won't have new fields → skip them
+        coerceInputValues = true   // null where non-null expected → use default
+        encodeDefaults = true      // ensure new fields are always written on export
+    }
 
     suspend fun exportBackup(context: Context) {
         val rootUri = settingsRepository.getStorageRoot()
@@ -88,7 +93,7 @@ class BackupViewModel @Inject constructor(
             settings = db.settingsDao.loadSetting()?: SettingsModel(),
             progressBoardItems = db.progressBoardDao.getAllBoardItems()
         )
-        Json.encodeToString(FluxBackup.serializer(), backup)
+        backupJson.encodeToString(FluxBackup.serializer(), backup)
     }
 
     private suspend fun saveToUri(context: Context, uri: Uri, json: String) =
@@ -106,7 +111,7 @@ class BackupViewModel @Inject constructor(
         }
 
     private suspend fun uploadBackupToDatabase(context: Context, json: String) = withContext(Dispatchers.IO) {
-        val backup = Json.decodeFromString(FluxBackup.serializer(), json)
+        val backup = backupJson.decodeFromString(FluxBackup.serializer(), json)
 
         // --- Workspaces ---
         backup.workspaces.forEach { ws ->

@@ -10,6 +10,7 @@ import com.flux.data.model.HabitModel
 import com.flux.data.model.JournalModel
 import com.flux.data.model.NotesModel
 import com.flux.data.model.TodoModel
+import com.flux.data.model.WorkspaceModel
 import com.flux.ui.screens.auth.AuthScreen
 import com.flux.ui.screens.events.EventDetails
 import com.flux.ui.screens.events.NewEvent
@@ -231,32 +232,8 @@ val WorkspaceScreens =
         NavRoutes.WorkspaceHome.route + "/{workspaceId}" to { navController, _, states, viewModels, workspaceId ->
             WorkspaceDetails(
                 navController,
-                states.notesState.allLabels.filter { it.workspaceId == workspaceId },
-                states.settings,
-                states.notesState.isNotesLoading,
-                states.eventState.isDatedEventLoading,
-                states.todoState.isLoading,
-                states.journalState.isLoading,
-                states.habitState.isLoading,
-                states.progressBoardState.isLoading,
-                states.workspaceState.allSpaces.first { it.workspaceId == workspaceId },
-                states.eventState.allEvent,
-                states.notesState.allNotes.filter { it.workspaceId == workspaceId },
-                states.notesState.selectedNotes,
-                states.eventState.selectedYearMonth,
-                states.eventState.selectedDate,
-                states.eventState.monthlyEventDates,
-                states.journalState.selectedYearMonth,
-                states.journalState.selectedDate,
-                states.journalState.monthlyJournalCount,
-                states.eventState.datedEvents,
-                states.habitState.allHabits,
-                states.todoState.allLists,
-                states.progressBoardState.allItems,
-                states.journalState.datedEntries,
-                states.journalState.allEntries,
-                states.habitState.allInstances,
-                states.eventState.allEventInstances,
+                states,
+                states.workspaceState.allSpaces.find { it.workspaceId==workspaceId }?: WorkspaceModel(workspaceId=workspaceId),
                 viewModels.settingsViewModel,
                 viewModels.workspaceViewModel::onEvent,
                 viewModels.notesViewModel::onEvent,

@@ -52,7 +52,6 @@ import com.flux.data.model.EventModel
 import com.flux.data.model.HabitInstanceModel
 import com.flux.data.model.HabitModel
 import com.flux.data.model.JournalModel
-import com.flux.data.model.WorkspaceModel
 import com.flux.data.model.occursOn
 import com.flux.ui.components.ActionType
 import com.flux.ui.components.SettingOption
@@ -70,7 +69,7 @@ import java.time.temporal.ChronoUnit
 import java.time.temporal.TemporalAdjusters
 
 fun LazyListScope.analyticsItems(
-    workspace: WorkspaceModel,
+    selectedSpaces: List<Int>,
     radius: Int,
     allHabitInstances: List<HabitInstanceModel>,
     totalHabits: Int,
@@ -81,9 +80,9 @@ fun LazyListScope.analyticsItems(
     allEventInstances: List<EventInstanceModel>
 ) {
     when {
-        workspace.selectedSpaces.isEmpty() -> item { EmptyAnalytics() }
+        selectedSpaces.isEmpty() -> item { EmptyAnalytics() }
         else -> {
-            if (workspace.selectedSpaces.contains(1)){
+            if (selectedSpaces.contains(1)){
                 item {
                     SettingOption(
                         title = stringResource(R.string.Notes),
@@ -95,13 +94,13 @@ fun LazyListScope.analyticsItems(
                     Spacer(Modifier.height(8.dp))
                 }
             }
-            if (workspace.selectedSpaces.contains(4)) {
+            if (selectedSpaces.contains(4)) {
                 item {
                     JournalAnalytics(radius, journalEntries)
                     Spacer(Modifier.height(8.dp))
                 }
             }
-            if (workspace.selectedSpaces.contains(3)) {
+            if (selectedSpaces.contains(3)) {
                 item {
                     ChartCirclePie(
                         radius = radius,
@@ -110,13 +109,13 @@ fun LazyListScope.analyticsItems(
                     Spacer(Modifier.height(8.dp))
                 }
             }
-            if (workspace.selectedSpaces.contains(5)){
+            if (selectedSpaces.contains(5)){
                 item {
                     HabitHeatMap(radius, allHabitInstances, totalHabits)
                     Spacer(Modifier.height(8.dp))
                 }
             }
-            if(workspace.selectedSpaces.contains(5)){
+            if(selectedSpaces.contains(5)){
                 item {
                     WeeklyHabitProgressChart(
                         radius,

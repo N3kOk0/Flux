@@ -232,29 +232,28 @@ fun Customize(
                 )
             }
 
-            if(!settings.data.useSystemTimeFormat){
-                item {
-                    SettingOption(
-                        title = stringResource(R.string.Hour_Format_24),
-                        description = stringResource(R.string.Hour_Format_24_Desc),
-                        icon = Icons.Filled.AccessTime,
-                        radius = shapeManager(
-                            radius = settings.data.cornerRadius,
-                            isLast = true
-                        ),
-                        actionType = ActionType.SWITCH,
-                        variable = settings.data.is24HourFormat,
-                        switchEnabled = {
-                            onSettingsEvents(
-                                SettingEvents.UpdateSettings(
-                                    settings.data.copy(
-                                        is24HourFormat = it
-                                    )
+            item {
+                SettingOption(
+                    title = stringResource(R.string.Hour_Format_24),
+                    description = stringResource(R.string.Hour_Format_24_Desc),
+                    icon = Icons.Filled.AccessTime,
+                    radius = shapeManager(
+                        radius = settings.data.cornerRadius,
+                        isLast = true
+                    ),
+                    isEnabled = !settings.data.useSystemTimeFormat,
+                    actionType = ActionType.SWITCH,
+                    variable = settings.data.is24HourFormat,
+                    switchEnabled = {
+                        onSettingsEvents(
+                            SettingEvents.UpdateSettings(
+                                settings.data.copy(
+                                    is24HourFormat = it
                                 )
                             )
-                        }
-                    )
-                }
+                        )
+                    }
+                )
             }
 
             item {

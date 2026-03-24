@@ -158,11 +158,7 @@ fun JournalToolBar(
 ) {
     val context = LocalContext.current
     val zoneId = ZoneId.systemDefault()
-
-    val selectedDate = remember(selectedEpochDay) {
-        LocalDate.ofEpochDay(selectedEpochDay)
-    }
-
+    val selectedDate = remember(selectedEpochDay) { LocalDate.ofEpochDay(selectedEpochDay) }
     val today = LocalDate.now()
     val isToday = selectedDate.isEqual(today)
 

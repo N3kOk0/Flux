@@ -55,8 +55,8 @@ fun LazyListScope.todoHomeItems(
     workspaceId: String,
     isLoading: Boolean,
     expandedTODOIds: Set<String>,
-    onExpandToggle: (String) -> Unit,
-    onTodoEvents: (TodoEvents) -> Unit
+    onTodoEvents: (TodoEvents) -> Unit,
+    onExpandToggle: (String) -> Unit
 ) {
     when {
         isLoading -> item { Loader() }
