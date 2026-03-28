@@ -4,5 +4,6 @@ import com.flux.data.model.WorkspaceModel
 
 data class WorkspaceState(
     val isLoading: Boolean = true,
-    val allSpaces: List<WorkspaceModel> = emptyList()
+    val currentWorkspace: WorkspaceModel? = null,
+    val allWorkspaces: List<WorkspaceModel> = emptyList()
 )

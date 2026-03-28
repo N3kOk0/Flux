@@ -384,6 +384,10 @@ fun HabitCalendarCard(
                         else -> 1f
                     }
 
+                    val habitAlreadyEnded = stringResource(R.string.habit_already_ended)
+                    val cantMarkFutureDate = stringResource(R.string.cannot_mark_future_dates)
+                    val habitStartsLater = stringResource(R.string.habit_starts_later)
+                    val notInSchedule = stringResource(R.string.date_not_in_schedule)
                     Box(
                         modifier = Modifier
                             .size(32.dp)
@@ -394,25 +398,25 @@ fun HabitCalendarCard(
                                 when {
                                     isAfterEnd -> Toast.makeText(
                                         context,
-                                        context.getString(R.string.habit_already_ended),
+                                        habitAlreadyEnded,
                                         Toast.LENGTH_SHORT
                                     ).show()
 
                                     isAfterToday -> Toast.makeText(
                                         context,
-                                        context.getString(R.string.cannot_mark_future_dates),
+                                        cantMarkFutureDate,
                                         Toast.LENGTH_SHORT
                                     ).show()
 
                                     isBeforeStart -> Toast.makeText(
                                         context,
-                                        context.getString(R.string.habit_starts_later),
+                                        habitStartsLater,
                                         Toast.LENGTH_SHORT
                                     ).show()
 
                                     !isAllowedByRecurrence -> Toast.makeText(
                                         context,
-                                        context.getString(R.string.date_not_in_schedule),
+                                        notInSchedule,
                                         Toast.LENGTH_SHORT
                                     ).show()
 
@@ -874,12 +878,11 @@ fun HabitBarChart(
                 .fillMaxHeight()
         ) {
             val barWidth = size.width / (weekCounts.size * 2 + 1)
-            val spacing = barWidth
             val stepHeight = size.height / maxDaysPerWeek
 
             weekCounts.forEachIndexed { index, count ->
                 val barHeight = stepHeight * count
-                val x = spacing + index * (barWidth + spacing)
+                val x = barWidth + index * (barWidth + barWidth)
                 val y = size.height - barHeight
 
                 drawRoundRect(
@@ -991,45 +994,55 @@ fun calculateStreaks(
     return StreakData(currentStreak, bestStreak)
 }
 
-private fun getExpectedDates(recurrence: RecurrenceRule, startDateTime: Long): List<Long> {
+private fun getExpectedDates(
+    recurrence: RecurrenceRule,
+    startDateTime: Long
+): List<Long> {
+
     val today = LocalDate.now()
-    val startDate = Instant.ofEpochMilli(startDateTime).atZone(ZoneId.systemDefault()).toLocalDate()
+
+    val startDate = Instant.ofEpochMilli(startDateTime)
+        .atZone(ZoneId.systemDefault())
+        .toLocalDate()
+
+    val weekly = recurrence as? RecurrenceRule.Weekly
+        ?: return emptyList()
+
     val expectedDates = mutableListOf<Long>()
 
     var current = startDate
     while (!current.isAfter(today)) {
-        // Convert to Monday=0, Tuesday=1, ..., Sunday=6 format
-        val dayOfWeek = (current.dayOfWeek.value + 5) % 7
-        if (dayOfWeek in (recurrence as RecurrenceRule.Weekly).daysOfWeek) {
+
+        // Monday = 0 ... Sunday = 6
+        val dayOfWeek = (current.dayOfWeek.value + 6) % 7
+
+        if (dayOfWeek in weekly.daysOfWeek) {
             expectedDates.add(current.toEpochDay())
         }
+
         current = current.plusDays(1)
     }
 
-    return expectedDates.sorted()
+    return expectedDates
 }
 
-private fun calculateCurrentStreak(expectedDates: List<Long>, completedDates: Set<Long>): Int {
+private fun calculateCurrentStreak(
+    expectedDates: List<Long>,
+    completedDates: Set<Long>
+): Int {
+
     if (expectedDates.isEmpty()) return 0
 
-    val now = System.currentTimeMillis()
-    val lastPastIndex = expectedDates.indexOfLast { it <= now }
-    if (lastPastIndex == -1) return 0
-
     var streak = 0
-    var i = lastPastIndex
 
-    // Case 1: Today expected but not completed → check yesterday instead
-    if (expectedDates[i] !in completedDates) {
-        i-- // move to yesterday
-        // if yesterday also not complete → streak = 0
-        if (i < 0 || expectedDates[i] !in completedDates) return 0
-    }
+    for (i in expectedDates.indices.reversed()) {
+        val date = expectedDates[i]
 
-    // Case 2: Count backwards while dates are completed
-    while (i >= 0 && expectedDates[i] in completedDates) {
-        streak++
-        i--
+        if (date in completedDates) {
+            streak++
+        } else {
+            if (streak > 0) break
+        }
     }
 
     return streak

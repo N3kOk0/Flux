@@ -185,6 +185,9 @@
     <string name="enterPasskey">Passwort eingeben</string>
     <string name="Remove_Cover">Cover entfernen</string>
     <string name="Search_Here">Hier suchen…</string>
+    <string name="current">Aktuell</string>
+    <string name="add">Hinzufügen</string>
+    <string name="workspace_deleted">Arbeitsbereich gelöscht</string>
 
     <!-- Space Management -->
     <string name="Current">Aktuell</string>
@@ -213,6 +216,15 @@
     <string name="tap_to_start">Tippen zum Starten</string>
     <string name="retry">Erneut versuchen</string>
     <string name="permission_required">Bitte erteilen Sie die Aufnahmeberechtigung.</string>
+    <string name="task">Aufgabe</string>
+    <string name="item_value">Elementwert</string>
+    <string name="list">Liste</string>
+    <string name="column">Spalte</string>
+    <string name="row">Zeile</string>
+    <string name="table">Tabelle</string>
+    <string name="url">URL</string>
+    <string name="name">Name</string>
+    <string name="link">Link</string>
 
     <!-- To-Do -->
     <string name="To_Do">Aufgaben</string>

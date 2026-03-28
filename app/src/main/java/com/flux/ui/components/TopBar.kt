@@ -209,6 +209,7 @@ fun WorkspaceTopBar(
             },
             actions = {
                 WorkspaceMore(
+                    isCompactMode = !isFullView,
                     isCoverAdded = workspace.cover.isNotBlank(),
                     isLocked = workspace.passKey.isNotBlank(),
                     isPinned = workspace.isPinned,
@@ -258,6 +259,7 @@ fun WorkspaceTopBar(
             },
             actions = {
                 WorkspaceMore(
+                    isCompactMode = !isFullView,
                     isCoverAdded = workspace.cover.isNotBlank(),
                     isLocked = workspace.passKey.isNotBlank(),
                     isPinned = workspace.isPinned,

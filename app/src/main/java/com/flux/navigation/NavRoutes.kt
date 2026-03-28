@@ -223,17 +223,15 @@ val WorkspaceScreens =
             WorkSpaces(
                 snackbarHostState,
                 navController,
-                states.settings.data.workspaceGridColumns,
-                states.settings.data.cornerRadius,
-                states.workspaceState.allSpaces,
-                viewModels.workspaceViewModel::onEvent
+                states,
+                viewModels
             )
         },
         NavRoutes.WorkspaceHome.route + "/{workspaceId}" to { navController, _, states, viewModels, workspaceId ->
             WorkspaceDetails(
                 navController,
                 states,
-                states.workspaceState.allSpaces.find { it.workspaceId==workspaceId }?: WorkspaceModel(workspaceId=workspaceId),
+                states.workspaceState.allWorkspaces.find { it.workspaceId==workspaceId }?: WorkspaceModel(workspaceId=workspaceId),
                 viewModels.settingsViewModel,
                 viewModels.workspaceViewModel::onEvent,
                 viewModels.notesViewModel::onEvent,

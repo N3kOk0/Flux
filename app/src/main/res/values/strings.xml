@@ -185,6 +185,9 @@
     <string name="enterPasskey">Enter Passkey</string>
     <string name="Remove_Cover">Remove Cover</string>
     <string name="Search_Here">Search here…</string>
+    <string name="current">Current</string>
+    <string name="add">Add</string>
+    <string name="workspace_deleted">Workspace Deleted</string>
 
     <!-- Space Management -->
     <string name="Current">Current</string>
@@ -213,6 +216,15 @@
     <string name="tap_to_start">Tap to start</string>
     <string name="retry">Retry</string>
     <string name="permission_required">Please provide recording permission.</string>
+    <string name="task">Task</string>
+    <string name="item_value">Item Value</string>
+    <string name="list">List</string>
+    <string name="column">Column</string>
+    <string name="row">Row</string>
+    <string name="table">Table</string>
+    <string name="url">URL</string>
+    <string name="name">Name</string>
+    <string name="link">Link</string>
 
     <!-- To-Do -->
     <string name="To_Do">To-Do</string>

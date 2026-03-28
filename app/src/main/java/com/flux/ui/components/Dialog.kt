@@ -32,6 +32,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Label
@@ -51,6 +52,7 @@ import androidx.compose.material.icons.filled.Mic
 import androidx.compose.material.icons.filled.NewLabel
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Remove
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.StopCircle
 import androidx.compose.material.icons.filled.SubdirectoryArrowRight
 import androidx.compose.material.icons.filled.TextFields
@@ -93,6 +95,7 @@ import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.toMutableStateList
 import androidx.compose.ui.Alignment
@@ -116,8 +119,10 @@ import androidx.compose.ui.window.DialogProperties
 import androidx.core.net.toUri
 import com.flux.R
 import com.flux.data.model.LabelModel
+import com.flux.data.model.WorkspaceModel
 import com.flux.other.AudioRecorder
 import com.flux.other.ExportType
+import com.flux.ui.screens.workspaces.CompactWorkspaceCard
 import com.flux.ui.theme.FONTS
 import com.flux.ui.theme.completed
 import com.flux.ui.theme.failed
@@ -495,7 +500,9 @@ fun EventNotificationDialog(
     Dialog(onDismissRequest = onDismissRequest) {
         Card(Modifier.fillMaxWidth()) {
             Column(
-                Modifier.fillMaxWidth().padding(16.dp),
+                Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 CircleWrapper(MaterialTheme.colorScheme.primary) {
@@ -725,7 +732,9 @@ fun ShareDialog(
         Card(
             shape = RoundedCornerShape(16.dp),
             elevation = CardDefaults.cardElevation(8.dp),
-            modifier = Modifier.fillMaxWidth().padding(16.dp)
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp)
         ) {
             Column(modifier = Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
                 Text(
@@ -754,7 +763,9 @@ fun ShareDialog(
 @Composable
 fun ExportCard(icon: ImageVector, title: String, onClick: () -> Unit){
     Card(
-        modifier = Modifier.fillMaxWidth().clip(RoundedCornerShape(50)),
+        modifier = Modifier
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(50)),
         shape = RoundedCornerShape(50),
         onClick = { onClick() },
         colors = CardDefaults.cardColors(
@@ -841,7 +852,7 @@ fun LinkDialog(
     }
 
     AlertDialog(
-        title = { Text("Link") },
+        title = { Text(stringResource(R.string.link)) },
         text = {
             Column {
                 OutlinedTextField(
@@ -859,7 +870,7 @@ fun LinkDialog(
                     onValueChange = { link = it },
                     singleLine = true,
                     isError = linkError,
-                    label = { Text("Url") },
+                    label = { Text(stringResource(R.string.url)) },
                     placeholder = { Text("https://www.google.com") },
                     supportingText = { if (linkError) { Text(text = "Incorrect Text") } },
                     keyboardOptions = KeyboardOptions(
@@ -911,7 +922,7 @@ fun TableDialog(
     var columnError by remember { mutableStateOf(false) }
 
     AlertDialog(
-        title = { Text("Table") },
+        title = { Text(stringResource(R.string.table)) },
         text = {
             Column {
                 OutlinedTextField(
@@ -926,7 +937,7 @@ fun TableDialog(
                         imeAction = ImeAction.Next
                     ),
                     singleLine = true,
-                    label = { Text("Row") })
+                    label = { Text(stringResource(R.string.row)) })
                 Spacer(modifier = Modifier.height(8.dp))
                 OutlinedTextField(
                     value = column,
@@ -940,7 +951,7 @@ fun TableDialog(
                         imeAction = ImeAction.Done
                     ),
                     singleLine = true,
-                    label = { Text("Column") }
+                    label = { Text(stringResource(R.string.column)) }
                 )
             }
         },
@@ -981,7 +992,7 @@ fun ListDialog(
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Text("List")
+                Text(stringResource(R.string.list))
 
                 SingleChoiceSegmentedButtonRow {
                     SegmentedButton(
@@ -1018,7 +1029,9 @@ fun ListDialog(
             }
         },
         text = {
-            Column(modifier = Modifier.fillMaxWidth().verticalScroll(rememberScrollState())) {
+            Column(modifier = Modifier
+                .fillMaxWidth()
+                .verticalScroll(rememberScrollState())) {
                 list.forEachIndexed { index, str ->
                     Row(
                         modifier = Modifier.fillMaxWidth(),
@@ -1029,7 +1042,7 @@ fun ListDialog(
                             value = str,
                             singleLine = true,
                             onValueChange = { list[index] = it },
-                            placeholder = { Text("Item Value") },
+                            placeholder = { Text(stringResource(R.string.item_value)) },
                             prefix = { Text(text = if (ordered) "${(index + 1)}. " else "• ") },
                             colors = TextFieldDefaults.colors(
                                 focusedIndicatorColor = MaterialTheme.colorScheme.surfaceContainerHigh,
@@ -1089,12 +1102,16 @@ fun TaskDialog(
     val taskList = remember { mutableStateListOf(TaskItem("", false)) }
 
     AlertDialog(
-        title = { Text("Task") },
+        title = { Text(stringResource(R.string.task)) },
         text = {
-            Column(modifier = Modifier.fillMaxWidth().verticalScroll(rememberScrollState())) {
+            Column(modifier = Modifier
+                .fillMaxWidth()
+                .verticalScroll(rememberScrollState())) {
                 taskList.forEachIndexed { index, taskState ->
                     Row(
-                        modifier = Modifier.fillMaxWidth().padding(top = 8.dp),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(top = 8.dp),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Checkbox(
@@ -1191,7 +1208,9 @@ fun RecordAudioDialog(
     ) {
         Card(modifier = Modifier.size(320.dp)) {
             Column(
-                modifier = Modifier.padding(16.dp).fillMaxSize(),
+                modifier = Modifier
+                    .padding(16.dp)
+                    .fillMaxSize(),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 if (!isRecording&& !hasRecorded) {
@@ -1317,11 +1336,16 @@ fun StudioRecorderUI(
     }
 
     Column(
-        modifier = Modifier.fillMaxWidth().fillMaxHeight().padding(8.dp),
+        modifier = Modifier
+            .fillMaxWidth()
+            .fillMaxHeight()
+            .padding(8.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         // TIMELINE + WAVE
-        Box(modifier = Modifier.fillMaxWidth().height(160.dp)) {
+        Box(modifier = Modifier
+            .fillMaxWidth()
+            .height(160.dp)) {
             TimelineWaveform(amplitudes, elapsedMs)
 
             // CENTER RED CURSOR
@@ -1338,7 +1362,9 @@ fun StudioRecorderUI(
 
         // TIMER
         Row(verticalAlignment = Alignment.CenterVertically) {
-            Box(Modifier.size(12.dp).background(Color.Red, CircleShape))
+            Box(Modifier
+                .size(12.dp)
+                .background(Color.Red, CircleShape))
             Spacer(Modifier.width(8.dp))
             Text(text = formatDuration(elapsedMs), fontSize = 22.sp)
         }
@@ -1371,7 +1397,9 @@ fun TimelineWaveform(
 ) {
     val onSurface = MaterialTheme.colorScheme.onSurface
 
-    Canvas(modifier = Modifier.fillMaxWidth().height(160.dp)) {
+    Canvas(modifier = Modifier
+        .fillMaxWidth()
+        .height(160.dp)) {
         val width = size.width
         val height = size.height
         val centerX = width / 2f
@@ -1547,4 +1575,47 @@ fun formatDuration(ms: Long): String {
     val sec = totalSec % 60
 
     return "%02d:%02d".format(min, sec)
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun ChangeWorkspaceDialog(
+    currentWorkspace: WorkspaceModel,
+    allWorkspace: List<WorkspaceModel>,
+    onDismiss: () -> Unit,
+    onChangeWorkspace: (WorkspaceModel) -> Unit,
+){
+    var query by rememberSaveable { mutableStateOf("") }
+
+    Dialog(onDismiss) {
+        Card{
+            Column(
+                Modifier
+                    .fillMaxWidth()
+                    .width(240.dp)
+                    .padding(horizontal = 12.dp, vertical = 16.dp)
+                    .heightIn(max=500.dp)
+                    .verticalScroll(rememberScrollState()),
+                verticalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                GeneralSearchBar(
+                    textFieldState = TextFieldState(query),
+                    leadingIcon = Icons.Default.Search,
+                    onSearch = { query = it },
+                    onCloseClicked = { query = "" }
+                )
+                Text(stringResource(R.string.current), style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.Bold))
+                CompactWorkspaceCard(currentWorkspace.icon, currentWorkspace.passKey.isNotBlank(), currentWorkspace.title){}
+                Text(stringResource(R.string.Others), style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.Bold))
+                FlowRow(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(4.dp), verticalArrangement = Arrangement.spacedBy(2.dp)) {
+                    allWorkspace.filter { it.workspaceId!=currentWorkspace.workspaceId && (it.title.contains(query) || it.description.contains(query))}.forEach { workspace->
+                        CompactWorkspaceCard(workspace.icon, workspace.passKey.isNotBlank(), workspace.title) {
+                            onDismiss()
+                            onChangeWorkspace(workspace)
+                        }
+                    }
+                }
+            }
+        }
+    }
 }

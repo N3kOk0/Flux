@@ -286,7 +286,7 @@ fun SpacesMenu(
         }
         if (selectedSpaces.contains(7)) {
             DropdownMenuItem(
-                text = { Text("Progress Tracker") },
+                text = { Text(stringResource(R.string.progress_tracker)) },
                 leadingIcon = { Icon(Icons.Outlined.TrackChanges, contentDescription = null) },
                 onClick = {
                     onConfirm(7)
@@ -309,16 +309,17 @@ fun SpacesMenu(
 
 @Composable
 fun WorkspaceMore(
-    isLocked: Boolean,
-    isCoverAdded: Boolean,
-    showEditLabel: Boolean,
-    isPinned: Boolean,
+    isCompactMode: Boolean = false,
+    isLocked: Boolean = false,
+    isCoverAdded: Boolean = false,
+    showEditLabel: Boolean = false,
+    isPinned: Boolean = false,
     onEditDetails: () -> Unit,
     onEditLabel: () -> Unit,
-    onRemoveCover: () -> Unit,
-    onAddCover: () -> Unit,
+    onRemoveCover: () -> Unit = {},
+    onAddCover: () -> Unit = {},
     onDelete: () -> Unit,
-    onTogglePinned: () -> Unit,
+    onTogglePinned: () -> Unit = {},
     onToggleLock: () -> Unit
 ) {
     var expanded by remember { mutableStateOf(false) }
@@ -342,6 +343,7 @@ fun WorkspaceMore(
                     onEditDetails()
                 }
             )
+
             DropdownMenuItem(
                 text = { Text(if (isPinned) stringResource(R.string.Unpin) else stringResource(R.string.Pin)) },
                 leadingIcon = {
@@ -355,37 +357,40 @@ fun WorkspaceMore(
                     onTogglePinned()
                 }
             )
-            DropdownMenuItem(
-                text = { Text(stringResource(R.string.Change_Cover)) },
-                leadingIcon = {
-                    Icon(
-                        Icons.Outlined.PhotoSizeSelectActual,
-                        contentDescription = null
-                    )
-                },
-                onClick = {
-                    expanded = false
-                    onAddCover()
-                }
-            )
-            if (isCoverAdded) {
+
+            if(!isCompactMode) {
                 DropdownMenuItem(
-                    colors = MenuDefaults.itemColors(
-                        leadingIconColor = MaterialTheme.colorScheme.error,
-                        textColor = MaterialTheme.colorScheme.error
-                    ),
-                    text = { Text(stringResource(R.string.Remove_Cover)) },
+                    text = { Text(stringResource(R.string.Change_Cover)) },
                     leadingIcon = {
                         Icon(
-                            Icons.Default.RemoveCircleOutline,
+                            Icons.Outlined.PhotoSizeSelectActual,
                             contentDescription = null
                         )
                     },
                     onClick = {
                         expanded = false
-                        onRemoveCover()
+                        onAddCover()
                     }
                 )
+                if (isCoverAdded) {
+                    DropdownMenuItem(
+                        colors = MenuDefaults.itemColors(
+                            leadingIconColor = MaterialTheme.colorScheme.error,
+                            textColor = MaterialTheme.colorScheme.error
+                        ),
+                        text = { Text(stringResource(R.string.Remove_Cover)) },
+                        leadingIcon = {
+                            Icon(
+                                Icons.Default.RemoveCircleOutline,
+                                contentDescription = null
+                            )
+                        },
+                        onClick = {
+                            expanded = false
+                            onRemoveCover()
+                        }
+                    )
+                }
             }
 
             if (showEditLabel) {
@@ -439,5 +444,82 @@ fun WorkspaceMore(
                 }
             )
         }
+    }
+}
+
+@Composable
+fun ExtremeCompactModeDropDown(
+    expanded: Boolean =false,
+    isLocked: Boolean = false,
+    showEditLabel: Boolean = false,
+    onEditDetails: () -> Unit,
+    onEditLabel: () -> Unit,
+    onDelete: () -> Unit,
+    onToggleLock: () -> Unit,
+    onDismiss: () -> Unit
+){
+    DropdownMenu(
+        expanded = expanded,
+        onDismissRequest = onDismiss
+    ) {
+        DropdownMenuItem(
+            text = { Text(stringResource(R.string.Edit_Details)) },
+            leadingIcon = { Icon(Icons.Outlined.Edit, contentDescription = null) },
+            onClick = {
+                onDismiss()
+                onEditDetails()
+            }
+        )
+
+        if (showEditLabel) {
+            HorizontalDivider()
+            DropdownMenuItem(
+                text = { Text(stringResource(R.string.Labels)) },
+                leadingIcon = {
+                    Icon(
+                        Icons.AutoMirrored.Outlined.Label,
+                        contentDescription = null
+                    )
+                },
+                trailingIcon = { Icon(Icons.Default.KeyboardDoubleArrowRight, null) },
+                onClick = {
+                    onDismiss()
+                    onEditLabel()
+                }
+            )
+            HorizontalDivider()
+        }
+
+        DropdownMenuItem(
+            text = {
+                Text(
+                    if (isLocked) stringResource(R.string.Unlock_Workspace) else stringResource(
+                        R.string.Lock_Workspace
+                    )
+                )
+            },
+            leadingIcon = {
+                Icon(
+                    if (isLocked) Icons.Outlined.LockOpen else Icons.Outlined.Lock,
+                    contentDescription = null
+                )
+            },
+            onClick = {
+                onDismiss()
+                onToggleLock()
+            }
+        )
+        DropdownMenuItem(
+            colors = MenuDefaults.itemColors(
+                leadingIconColor = MaterialTheme.colorScheme.error,
+                textColor = MaterialTheme.colorScheme.error
+            ),
+            text = { Text(stringResource(R.string.Delete_Workspace)) },
+            leadingIcon = { Icon(Icons.Outlined.Delete, contentDescription = null) },
+            onClick = {
+                onDismiss()
+                onDelete()
+            }
+        )
     }
 }

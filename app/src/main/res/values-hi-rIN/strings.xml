@@ -185,6 +185,9 @@
     <string name="enterPasskey">पासकी दर्ज करें</string>
     <string name="Remove_Cover">कवर हटाएँ</string>
     <string name="Search_Here">यहाँ खोजें…</string>
+    <string name="current">वर्तमान</string>
+    <string name="add">जोड़ें</string>
+    <string name="workspace_deleted">वर्कस्पेस हटाया गया</string>
 
     <!-- Space Management -->
     <string name="Current">वर्तमान</string>
@@ -213,6 +216,15 @@
     <string name="tap_to_start">शुरू करने के लिए टैप करें</string>
     <string name="retry">पुनः प्रयास करें</string>
     <string name="permission_required">कृपया रिकॉर्डिंग की अनुमति दें।</string>
+    <string name="task">कार्य</string>
+    <string name="item_value">आइटम मान</string>
+    <string name="list">सूची</string>
+    <string name="column">स्तंभ</string>
+    <string name="row">पंक्ति</string>
+    <string name="table">तालिका</string>
+    <string name="url">यूआरएल</string>
+    <string name="name">नाम</string>
+    <string name="link">लिंक</string>
 
     <!-- To-Do -->
     <string name="To_Do">करने के कार्य</string>

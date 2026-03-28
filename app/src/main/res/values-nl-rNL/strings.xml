@@ -185,6 +185,9 @@
     <string name="enterPasskey">Voer toegangscode in</string>
     <string name="Remove_Cover">Omslag verwijderen</string>
     <string name="Search_Here">Hier zoeken…</string>
+    <string name="current">Huidig</string>
+    <string name="add">Toevoegen</string>
+    <string name="workspace_deleted">Werkruimte verwijderd</string>
 
     <!-- Space Management -->
     <string name="Current">Huidig</string>
@@ -213,6 +216,15 @@
     <string name="tap_to_start">Tik om te starten</string>
     <string name="retry">Opnieuw proberen</string>
     <string name="permission_required">Geef alstublieft opname-toestemming.</string>
+    <string name="task">Taak</string>
+    <string name="item_value">Itemwaarde</string>
+    <string name="list">Lijst</string>
+    <string name="column">Kolom</string>
+    <string name="row">Rij</string>
+    <string name="table">Tabel</string>
+    <string name="url">URL</string>
+    <string name="name">Naam</string>
+    <string name="link">Link</string>
 
     <!-- To-Do -->
     <string name="To_Do">Te Doen</string>

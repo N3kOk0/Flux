@@ -35,8 +35,8 @@ fun LazyListScope.spaceDetailItems(
     onToggleTODO: (String) -> Unit,
     onProgressItemClick: (ProgressBoardModel) -> Unit,
 ) {
-    when (space?.title) {
-        "Habits" -> habitsHomeItems(
+    when (space?.id) {
+        5 -> habitsHomeItems(
             navController,
             states.habitState.isLoading,
             radius,
@@ -46,7 +46,7 @@ fun LazyListScope.spaceDetailItems(
             states.settings,
             onHabitEvents
         )
-        "Notes" -> notesHomeItems(
+        1 -> notesHomeItems(
             navController,
             workspaceId,
             states.notesState.selectedNotes,
@@ -58,7 +58,7 @@ fun LazyListScope.spaceDetailItems(
             states.notesState.allNotes,
             onNotesEvents
         )
-        "Journal" -> journalHomeItems(
+        4 -> journalHomeItems(
             navController,
             states.settings,
             states.journalState.selectedYearMonth,
@@ -69,7 +69,7 @@ fun LazyListScope.spaceDetailItems(
             states.journalState.datedEntries,
             onJournalEvents
         )
-        "Analytics" -> analyticsItems(
+        6 -> analyticsItems(
             availableSpaces,
             radius,
             states.habitState.allInstances,
@@ -80,19 +80,19 @@ fun LazyListScope.spaceDetailItems(
             states.eventState.allEvent,
             states.eventState.allEventInstances
         )
-        "Progress Tracker" -> progressBoardItems(
+        7 -> progressBoardItems(
             states.progressBoardState.isLoading,
             radius,
             states.progressBoardState.allItems,
             onProgressItemClick
         )
-        "To-Do" -> todoHomeItems(
+        2 -> todoHomeItems(
             navController, radius, states.todoState.allLists, workspaceId,
             states.todoState.isLoading, expandedTODOIds, onTodoEvents, onToggleTODO
         )
-        "Events" -> eventHomeItems(
+        3 -> eventHomeItems(
             navController, radius,
-            states.settings.data.is24HourFormat,
+            states.settings.data.isCalendarMonthlyView,
             states.settings.data.is24HourFormat,
             states.eventState.isDatedEventLoading,
             workspaceId,

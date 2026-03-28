@@ -225,7 +225,9 @@ fun WorkspaceDetails(
             onNotesEvents(NotesEvents.DeleteAllWorkspaceNotes(workspaceId))
             onTodoEvents(TodoEvents.DeleteAllWorkspaceLists(workspaceId))
             onTaskEvents(TaskEvents.DeleteAllWorkspaceEvents(workspaceId, context))
+            onJournalEvents(JournalEvents.DeleteWorkspaceEntries(workspaceId))
             onHabitEvents(HabitEvents.DeleteAllWorkspaceHabits(workspaceId, context))
+            onProgressBoardEvents(ProgressBoardEvents.DeleteBoardItemsByWorkspace(workspaceId))
         }, onDismissRequest = {
             showDeleteWorkspaceDialog = false
         })

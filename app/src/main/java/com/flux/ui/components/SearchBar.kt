@@ -114,10 +114,10 @@ fun NotesSearchBar(
 @Composable
 fun GeneralSearchBar(
     textFieldState: TextFieldState,
-    leadingIcon: ImageVector,
-    trailingIcon: ImageVector,
-    onLeadingIconClicked: () -> Unit,
-    onTrailingIconClicked: () -> Unit,
+    leadingIcon: ImageVector? = null,
+    trailingIcon: ImageVector? = null,
+    onLeadingIconClicked: () -> Unit = {},
+    onTrailingIconClicked: () -> Unit = {},
     onSearch: (String) -> Unit,
     onCloseClicked: () -> Unit,
 ) {
@@ -171,13 +171,13 @@ fun GeneralSearchBar(
 @Composable
 fun GeneralSearchInputField(
     query: String,
-    leadingIcon: ImageVector,
-    trailingIcon: ImageVector,
+    leadingIcon: ImageVector?,
+    trailingIcon: ImageVector?,
     onQueryChange: (String) -> Unit,
     onSearch: (String) -> Unit,
     onSearchClosed: () -> Unit,
-    onLeadingIconClicked: () -> Unit,
-    onTrailingIconClicked: () -> Unit
+    onLeadingIconClicked: () -> Unit = {},
+    onTrailingIconClicked: () -> Unit = {}
 ) {
     SearchBarDefaults.InputField(
         query = query,
@@ -186,24 +186,28 @@ fun GeneralSearchInputField(
         expanded = false,
         onExpandedChange = { },
         placeholder = { Text(stringResource(R.string.Search_Here)) },
-        leadingIcon = {
-            IconButton(onClick = onLeadingIconClicked) {
-                Icon(
-                    imageVector = leadingIcon,
-                    contentDescription = null,
-                    tint = MaterialTheme.colorScheme.primary
-                )
+        leadingIcon = leadingIcon?.let {
+            {
+                IconButton(onClick = onLeadingIconClicked) {
+                    Icon(
+                        imageVector = it,
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.primary
+                    )
+                }
             }
         },
         trailingIcon = {
             Row {
                 if (query.isNotBlank()) CloseButton(onSearchClosed)
-                IconButton(onClick = onTrailingIconClicked) {
-                    Icon(
-                        imageVector = trailingIcon,
-                        contentDescription = null,
-                        tint = MaterialTheme.colorScheme.primary
-                    )
+                trailingIcon?.let {
+                    IconButton(onClick = onTrailingIconClicked) {
+                        Icon(
+                            imageVector = trailingIcon,
+                            contentDescription = null,
+                            tint = MaterialTheme.colorScheme.primary
+                        )
+                    }
                 }
             }
         },

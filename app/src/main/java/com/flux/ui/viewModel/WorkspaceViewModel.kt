@@ -46,9 +46,9 @@ class WorkspaceViewModel @Inject constructor(
 
     private fun reduce(event: WorkspaceEvents) {
         when (event) {
-            is WorkspaceEvents.DeleteSpace -> deleteWorkspace(event.space)
-            is WorkspaceEvents.UpsertSpace -> upsertWorkspace(event.space)
-            is WorkspaceEvents.UpsertSpaces -> togglePinWorkspaces(event.spaces)
+            is WorkspaceEvents.DeleteSpace -> deleteWorkspace(event.workspace)
+            is WorkspaceEvents.UpsertSpace -> upsertWorkspace(event.workspace)
+            is WorkspaceEvents.UpsertSpaces -> togglePinWorkspaces(event.workspaces)
             is WorkspaceEvents.ChangeCover -> {
                 viewModelScope.launch(Dispatchers.IO) {
                     val cover = changeCover(event.context, event.uri)
@@ -57,6 +57,7 @@ class WorkspaceViewModel @Inject constructor(
                     }
                 }
             }
+            is WorkspaceEvents.ChangeWorkspace -> { updateState { it.copy(currentWorkspace = event.workspace) }}
         }
     }
 
@@ -118,7 +119,19 @@ class WorkspaceViewModel @Inject constructor(
         updateState { it.copy(isLoading = true) }
         viewModelScope.launch {
             repository.loadAllWorkspaces()
-                .collect { data -> updateState { it.copy(isLoading = false, allSpaces = data) } }
+                .collect { data ->
+                    updateState {
+                        it.copy(
+                            isLoading = false,
+                            allWorkspaces = data,
+                            currentWorkspace = when {
+                                it.currentWorkspace == null -> data.firstOrNull()
+                                else -> data.find { w -> w.workspaceId == it.currentWorkspace.workspaceId }
+                                    ?: data.firstOrNull()
+                            }
+                        )
+                    }
+                }
         }
     }
 
