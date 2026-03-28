@@ -1,0 +1,8 @@
+* Fixed Progress Tracker Delete bug
+* New UI view for Extreme Compact Mode
+* Fixed Habit Streak calculation bug
+* Fixed Compact Mode workspace spacing issue
+* Fixed Default Editor Visibility Bug
+* Fixed Backup import Failure Bug
+* Added System Font in settings
+* Sticky Notification in Habits
