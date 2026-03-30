@@ -199,7 +199,7 @@ fun ExtremeCompactMode(
             val allSpaces = getSpacesList()
             val selectedNotes = states.notesState.selectedNotes
             val allNotes = states.notesState.allNotes
-            var query by remember { mutableStateOf("") }
+            var notesQuery by remember { mutableStateOf("")}
             val selectedSpaceId = rememberSaveable { mutableIntStateOf(if (currentWorkspace.selectedSpaces.isEmpty()) -1 else currentWorkspace.selectedSpaces.first()) }
             val currentSpace = allSpaces.find { it.id == selectedSpaceId.intValue }
             var isMoreExpanded by remember { mutableStateOf(false) }
@@ -289,6 +289,8 @@ fun ExtremeCompactMode(
                         workspaceId,
                         currentWorkspace,
                         states,
+                        notesQuery,
+                        { notesQuery = it },
                         viewModels.settingsViewModel::onEvent,
                         viewModels.notesViewModel::onEvent,
                         { selectedSpaceId.intValue = it },
@@ -304,7 +306,7 @@ fun ExtremeCompactMode(
                         workspaceId,
                         currentWorkspace.selectedSpaces,
                         states,
-                        query,
+                        notesQuery,
                         states.settings.data.cornerRadius,
                         currentSpace,
                         viewModels.habitViewModel::onEvent,

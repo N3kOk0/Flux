@@ -58,7 +58,7 @@ import com.flux.ui.viewModel.SettingsViewModel
 @RequiresApi(Build.VERSION_CODES.TIRAMISU)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun WorkspaceDetails(
+fun NormalModeDetails(
     navController: NavController,
     states: States,
     workspace: WorkspaceModel,
@@ -179,6 +179,8 @@ fun WorkspaceDetails(
                 workspaceId,
                 workspace,
                 states,
+                query,
+                {query=it},
                 onSettingEvents,
                 onNotesEvents,
                 { selectedSpaceId.intValue = it },

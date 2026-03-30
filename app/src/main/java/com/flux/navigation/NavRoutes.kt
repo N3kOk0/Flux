@@ -30,8 +30,8 @@ import com.flux.ui.screens.settings.Settings
 import com.flux.ui.screens.settings.StorageSelectionScreen
 import com.flux.ui.screens.settings.Themes
 import com.flux.ui.screens.todo.TodoDetail
+import com.flux.ui.screens.workspaces.NormalModeDetails
 import com.flux.ui.screens.workspaces.WorkSpaces
-import com.flux.ui.screens.workspaces.WorkspaceDetails
 import com.flux.ui.state.States
 import com.flux.ui.viewModel.ViewModels
 
@@ -228,7 +228,7 @@ val WorkspaceScreens =
             )
         },
         NavRoutes.WorkspaceHome.route + "/{workspaceId}" to { navController, _, states, viewModels, workspaceId ->
-            WorkspaceDetails(
+            NormalModeDetails(
                 navController,
                 states,
                 states.workspaceState.allWorkspaces.find { it.workspaceId==workspaceId }?: WorkspaceModel(workspaceId=workspaceId),

@@ -51,6 +51,8 @@ fun LazyListScope.spacesToolbarList(
     workspaceId: String,
     workspace: WorkspaceModel,
     states: States,
+    query: String,
+    onSearchNotes: (String) -> Unit,
     onSettingEvents: (SettingEvents) -> Unit,
     onNotesEvents: (NotesEvents) -> Unit,
     onChangeSpace: (Int) -> Unit,
@@ -66,7 +68,6 @@ fun LazyListScope.spacesToolbarList(
         val totalNotes = allNotes.size
         var showDeleteDialog by remember { mutableStateOf(false) }
         var showSpacesMenu by remember { mutableStateOf(false) }
-        var query by remember { mutableStateOf("") }
         val importSuccess = stringResource(R.string.import_success)
         val importFailed = stringResource(R.string.import_failed)
         val journalSelectedDate = states.journalState.selectedDate
@@ -169,7 +170,7 @@ fun LazyListScope.spacesToolbarList(
                         workspaceId,
                         query,
                         settings.isGridView,
-                        onSearch = { query = it },
+                        onSearch = onSearchNotes,
                         onImportNote = { importNoteLauncher.launch(arrayOf("text/markdown", "text/plain")) },
                         onChangeView = {
                             onSettingEvents(

@@ -324,7 +324,9 @@ fun NotesToolBar(
         NotesSearchBar(
             query = query,
             onQueryChange = { onSearch(it) },
-            onCloseClicked = { onSearchClicked = false },
+            onCloseClicked = {
+                onSearch("")
+                onSearchClicked = false },
             modifier = Modifier.width(200.dp)
         )
     }
